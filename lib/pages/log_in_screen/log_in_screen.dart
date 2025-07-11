@@ -33,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
           height: 370, // Specify the desired height of your box
           padding: const EdgeInsets.all(20.0), // Add padding inside the box
           decoration: BoxDecoration(
-            color: Color(0xFFEDE7F6), // Background color of the box
+            color: ElementColors.backgroundColor, // Background color of the box
             borderRadius: BorderRadius.circular(ElementColors.borderRadius), // Rounded corners
           ),
           child: Column( // Center the text within the box
@@ -132,10 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Text('Don\'t have an account?', style: TextStyle(fontSize: 15)),
               TextButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const SignUpScreen()),
-                  );
+                  Navigator.pushReplacementNamed(context, '/signup');
                 },
                 child: Text('Sign up', style: TextStyle(fontSize: 15)),
               ),

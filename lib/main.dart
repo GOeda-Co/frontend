@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:frontend/pages/sign_up_screen/sign_up_screen.dart';
 import 'package:frontend/pages/log_in_screen/log_in_screen.dart';
 import 'package:frontend/pages/element_colors.dart';
-import 'app.dart';
+import 'package:frontend/layout/app_shell.dart';
+//import 'package:frontend/theme.dart'; //TODO: Return to this theme
+import 'package:frontend/util.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -13,13 +16,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = createTextTheme(context, 'Archivo', 'Archivo Black');
+
     return MaterialApp(
-      title: 'Repeatro',
+      //TODO: Return to this theme
+      // theme: MaterialTheme(textTheme).light(),
+      // darkTheme: MaterialTheme(textTheme).dark(),
+      // themeMode: ThemeMode.system,
+      
+      //TODO: Remove this theme
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: ElementColors.buttonColor),
       ),
-      home: const MyHomePage(title: 'Repeatro'),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const MyHomePage(title: 'Repeatro'),
+        '/signup': (context) => const SignUpScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/app-shell': (context) => const AppShell(),
+      },
       debugShowCheckedModeBanner: false,
+      // Enable URL routing for web
+      navigatorKey: GlobalKey<NavigatorState>(),
     );
   }
 }
@@ -48,10 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const SignUpScreen()),
-                    );
+                    Navigator.pushNamed(context, '/signup');
                   }, 
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ElementColors.buttonColor,
@@ -62,10 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 const SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context, 
-                      MaterialPageRoute(builder: (context) => const LoginScreen()),
-                    );
+                    Navigator.pushNamed(context, '/login');
                   }, 
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ElementColors.buttonColor,
@@ -73,6 +85,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   child: const Text('Log in', style: TextStyle(color: Colors.white)),
                 ),
+                //TODO: Remove this button
+                ElevatedButton(onPressed: () {
+                  Navigator.pushNamed(context, '/app-shell');
+                }, child: const Text('TEMP:App Shell'))
               ],
             ),
           )

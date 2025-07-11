@@ -158,10 +158,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               Text('Already have an account?', style: TextStyle(fontSize: 15)),
               TextButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  );
+                  Navigator.pushReplacementNamed(context, '/login');
                 },
                 child: Text('Login', style: TextStyle(fontSize: 15)),
               ),
