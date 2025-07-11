@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/pages/sign_up_screen/sign_up_screen.dart';
 import 'package:frontend/pages/log_in_screen/log_in_screen.dart';
 import 'package:frontend/pages/element_colors.dart';
+import 'app.dart';
 
 void main() {
   runApp(const MyApp());
