@@ -4,7 +4,7 @@ import 'package:frontend/pages/log_in_screen/log_in_screen.dart';
 import 'package:frontend/pages/element_colors.dart';
 import 'package:frontend/layout/app_shell.dart';
 //import 'package:frontend/theme.dart'; //TODO: Return to this theme
-import 'package:frontend/util.dart';
+//import 'package:frontend/util.dart'; //TODO: Return to this util
 
 
 void main() {
@@ -16,7 +16,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = createTextTheme(context, 'Archivo', 'Archivo Black');
+    //TODO: Return to this theme
+    //final textTheme = createTextTheme(context, 'Archivo', 'Archivo Black');
 
     return MaterialApp(
       //TODO: Return to this theme
