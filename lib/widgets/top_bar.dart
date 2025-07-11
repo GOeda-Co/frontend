@@ -22,17 +22,6 @@ class TopBar extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          CircleAvatar(
-            backgroundColor: colors.primary,
-            radius: 16,
-            child: Text(
-              'M',
-              style: TextStyle(
-                color: colors.onPrimary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
         ],
       ),
     );

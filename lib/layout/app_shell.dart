@@ -26,68 +26,48 @@ class _AppShellState extends State<AppShell> {
         children: [
           // NAVIGATION RAIL
           Container(
+            width: 72,
+            margin: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: colors.surfaceContainerLow,
-              borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(24),
-                bottomRight: Radius.circular(24),
-              ),
+              borderRadius: BorderRadius.circular(24),
             ),
-            margin: const EdgeInsets.all(16),
-            child: NavigationRail(
-              backgroundColor: Colors.transparent,
-              selectedIndex: selectedIndex,
-              onDestinationSelected: (index) {
-                setState(() => selectedIndex = index);
-              },
-              labelType: NavigationRailLabelType.all,
-              groupAlignment: 0.0, // центрирует по высоте
-              leading: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 16.0),
-                child: Icon(Icons.diamond, size: 32),
-              ),
-              destinations: const [
-                NavigationRailDestination(
-                  icon: Icon(Icons.library_books_outlined),
-                  selectedIcon: Icon(Icons.library_books),
-                  label: Text('Decks'),
+            child: Column(
+              children: [
+                // Верхние кнопки
+                const SizedBox(height: 16),
+                _buildNavItem(0, Icons.library_books, 'Decks'),
+                _buildNavItem(1, Icons.insights, 'Stats'),
+
+                Spacer(), // Отделяет верх от низа
+                // Нижние кнопки
+                IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () {},
+                  tooltip: 'Add',
                 ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.insights_outlined),
-                  selectedIcon: Icon(Icons.insights),
-                  label: Text('Stats'),
+                const SizedBox(height: 8),
+                InkWell(
+                  onTap: () {
+                    setState(() => selectedIndex = 2);
+                  },
+                  borderRadius: BorderRadius.circular(50),
+                  child: CircleAvatar(
+                    radius: 16,
+                    backgroundColor: selectedIndex == 2
+                        ? colors.primary
+                        : colors.surfaceContainerHighest,
+                    child: Icon(
+                      Icons.person,
+                      size: 18,
+                      color: selectedIndex == 2
+                          ? colors.onPrimary
+                          : colors.onSurface,
+                    ),
+                  ),
                 ),
+                const SizedBox(height: 12),
               ],
-              trailing: Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.settings_outlined),
-                      onPressed: () {},
-                      tooltip: 'Settings',
-                    ),
-                    const SizedBox(height: 12),
-                    InkWell(
-                      onTap: () {},
-                      borderRadius: BorderRadius.circular(50),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: CircleAvatar(
-                          radius: 16,
-                          backgroundColor: colors.primary,
-                          child: Icon(
-                            Icons.person,
-                            color: colors.onPrimary,
-                            size: 18,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                  ],
-                ),
-              ),
             ),
           ),
 
@@ -115,4 +95,13 @@ class _AppShellState extends State<AppShell> {
       ),
     );
   }
+  Widget _buildNavItem(int index, IconData icon, String tooltip) {
+  final isSelected = selectedIndex == index;
+
+  return IconButton(
+    icon: Icon(icon, color: isSelected ? Colors.purple : Colors.pink[150]),
+    tooltip: tooltip,
+    onPressed: () => setState(() => selectedIndex = index),
+  );
+}
 }
