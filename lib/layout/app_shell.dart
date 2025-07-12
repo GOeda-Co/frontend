@@ -15,7 +15,7 @@ class _AppShellState extends State<AppShell> {
   int selectedIndex = 0;
 
   final List<String> titles = ['Decks', 'Stats', 'Profile'];
-  final List<Widget> pages = const [DecksPage(), StatsPage(), ProfileCenter()];
+  final List<Widget> pages = const [DecksPage(), CardsPage(), ProfileCenter()];
 
   @override
   Widget build(BuildContext context) {
