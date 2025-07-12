@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/deck_info/deck_info.dart';
 
 class DecksPage extends StatelessWidget {
   const DecksPage({super.key});
@@ -72,6 +73,7 @@ class RecentsSection extends StatelessWidget {
                 title: item['title'],
                 cardCount: item['cards'],
                 onIconTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => FlashcardPage()));
                   debugPrint('Tapped icon on ${item['title']}');
                 },
               );
