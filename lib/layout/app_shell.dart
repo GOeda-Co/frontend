@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/profile/profile_page.dart';
 import '../pages/decks/decks_page.dart';
 import '../pages/stats/stats_page.dart';
 import '../widgets/top_bar.dart';
@@ -13,8 +14,8 @@ class AppShell extends StatefulWidget {
 class _AppShellState extends State<AppShell> {
   int selectedIndex = 0;
 
-  final List<String> titles = ['Decks', 'Stats'];
-  final List<Widget> pages = const [DecksPage(), StatsPage()];
+  final List<String> titles = ['Decks', 'Stats', 'Profile'];
+  final List<Widget> pages = const [DecksPage(), StatsPage(), ProfileCenter()];
 
   @override
   Widget build(BuildContext context) {
