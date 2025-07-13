@@ -3,8 +3,8 @@ import 'package:frontend/pages/sign_up_screen/sign_up_screen.dart';
 import 'package:frontend/pages/log_in_screen/log_in_screen.dart';
 import 'package:frontend/pages/element_colors.dart';
 import 'package:frontend/layout/app_shell.dart';
-import 'package:frontend/theme.dart';
-import 'package:frontend/util.dart';
+import 'package:frontend/colorscheme/theme.dart';
+import 'package:frontend/colorscheme/util.dart';
 
 
 class LandingPage extends StatelessWidget {
