@@ -1,6 +1,11 @@
 import 'dart:convert';
+// import 'dart:ffi';
 
+import 'package:dio/dio.dart';
+import 'package:frontend/pages/log_in_screen/log_in_screen.dart';
+import 'package:frontend/sso/interceptor.dart';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class RegisterMessageRequest {
   final String email;
@@ -44,6 +49,8 @@ class RegisterMessageResponse {
 class ApiService {
   static const String baseUrl = 'http://localhost:8080';
 
+  static final Dio dio = Dio()..interceptors.add(AuthInterceptor());
+
   final http.Client _client;
 
   ApiService({http.Client? client}) : _client = client ?? http.Client();
@@ -65,6 +72,51 @@ class ApiService {
       );
       if (userUpdateResponse.statusCode != 200) {
         print('Failed to update user data!');
+        return null;
+      }
+
+      return userUpdateResponse.body;
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  void decodeToken(String token) {
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+
+    print('Decoded payload: $decodedToken');
+
+    final userId = decodedToken['sub'] ?? decodedToken['id'];
+    final email = decodedToken['email'];
+    final role = decodedToken['role'];
+
+    print('User ID: $userId');
+    print('Email: $email');
+    print('Role: $role');
+  }
+
+  Future<String?> login(String email, String password, int appId) async {
+    try {
+      final userUpdateUrl = Uri.parse('http://localhost:8080/login');
+      // final request = RegisterMessageRequest(
+      //   email: "asa@mail.ru",
+      //   password: "cock",
+      //   name: "name",
+      // );
+      //
+      // final userUpdate = {'id': userId, 'name': name, 'email': email};
+      final userUpdateResponse = await http.post(
+        userUpdateUrl,
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+          'app_id': appId,
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (userUpdateResponse.statusCode != 200) {
+        print('Failed to update user data!');
+        print('Reponse: ${userUpdateResponse.body}');
         return null;
       }
 

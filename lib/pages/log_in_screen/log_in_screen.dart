@@ -1,6 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:frontend/pages/element_colors.dart';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:frontend/api/api.dart';
+import 'package:frontend/app.dart';
+import 'package:frontend/pages/element_colors.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/sso/storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,8 +18,10 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _isObscure = true; // Password visibility
-  final TextEditingController _emailTextController = TextEditingController(); // Text deletion
-  final TextEditingController _passwordTextController = TextEditingController(); // Text deletion
+  final TextEditingController _emailTextController =
+      TextEditingController(); // Text deletion
+  final TextEditingController _passwordTextController =
+      TextEditingController(); // Text deletion
 
   @override
   void dispose() {
@@ -24,29 +33,35 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-      ),
-      body: Center( // Center the entire box horizontally and vertically
+      appBar: AppBar(backgroundColor: Colors.white),
+      body: Center(
+        // Center the entire box horizontally and vertically
         child: Container(
           width: 350, // Specify the desired width of your box
           height: 370, // Specify the desired height of your box
           padding: const EdgeInsets.all(20.0), // Add padding inside the box
           decoration: BoxDecoration(
             color: ElementColors.backgroundColor, // Background color of the box
-            borderRadius: BorderRadius.circular(ElementColors.borderRadius), // Rounded corners
+            borderRadius: BorderRadius.circular(
+              ElementColors.borderRadius,
+            ), // Rounded corners
           ),
-          child: Column( // Center the text within the box
+          child: Column(
+            // Center the text within the box
             children: [
               Text(
-              'Welcome to Repeatro!',
-              textAlign: TextAlign.center, // Center the text itself if it wraps
-              style: TextStyle(
-                fontSize: 24,
-                color: ElementColors.textColor, // Text color
+                'Welcome to Repeatro!',
+                textAlign:
+                    TextAlign.center, // Center the text itself if it wraps
+                style: TextStyle(
+                  fontSize: 24,
+                  color: ElementColors.textColor, // Text color
                 ),
               ),
-              Text('Sign in to continue', style: TextStyle(fontSize: 15, color: Colors.grey)),
+              Text(
+                'Sign in to continue',
+                style: TextStyle(fontSize: 15, color: Colors.grey),
+              ),
               SizedBox(height: 20),
               TextField(
                 controller: _emailTextController,
@@ -60,10 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   suffixIcon: IconButton(
-                    icon: const Icon(
-                      Icons.delete, 
-                      size: 20
-                      ),
+                    icon: const Icon(Icons.delete, size: 20),
                     onPressed: () {
                       _emailTextController.clear();
                       FocusScope.of(context).requestFocus();
@@ -92,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           _isObscure ? Icons.visibility : Icons.visibility_off,
                           size: 20,
                         ),
-                      
+
                         onPressed: () {
                           setState(() {
                             _isObscure = !_isObscure;
@@ -100,10 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       ),
                       IconButton(
-                        icon: const Icon(
-                          Icons.delete, 
-                          size: 20
-                          ),
+                        icon: const Icon(Icons.delete, size: 20),
                         onPressed: () {
                           _passwordTextController.clear();
                           FocusScope.of(context).requestFocus();
@@ -115,17 +124,87 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                 style: ElevatedButton.styleFrom(
-                   backgroundColor: ElementColors.buttonColor, //Button color
-                   foregroundColor: Colors.white,
-                   padding: EdgeInsets.symmetric(horizontal: 35, vertical: 17),
-                   shape: RoundedRectangleBorder(
-                     borderRadius: BorderRadius.circular(15.0),
-                   ),
-                 ),
-                 child: Text('Log in', style: TextStyle(fontSize: 17)),
-                onPressed: () {
-                  // TODO: Implement log in logic
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ElementColors.buttonColor, //Button color
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 35, vertical: 17),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                ),
+                child: Text('Log in', style: TextStyle(fontSize: 17)),
+                onPressed: () async {
+                  final email = _emailTextController.text.trim();
+                  final password = _passwordTextController.text;
+
+                  String? errorMessage;
+
+                  if (email.isEmpty ||
+                      !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
+                    errorMessage = 'Enter a valid email address.';
+                  } else if (password.length < 6) {
+                    errorMessage =
+                        'Password must be at least 6 characters long.';
+                  }
+
+                  if (errorMessage != null) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('Invalid Input'),
+                        content: Text("errorMessage"),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
+                    return;
+                  }
+
+                  try {
+                    final responseString = await ApiService().login(
+                      email,
+                      password,
+                      1,
+                    );
+
+                    if (responseString == null) {
+                      throw Exception("Server returned no response.");
+                    }
+
+                    final json = jsonDecode(responseString);
+                    final token = json['token'];
+
+                    if (token == null || token.isEmpty) {
+                      throw Exception("Wrong email or password");
+                    }
+
+                      
+                    await TokenStorage.saveToken(token);
+
+                    // If login is successful, navigate:
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AnkiApp()),
+                    );
+                  } catch (e) {
+                    showDialog(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: Text('Login Failed'),
+                        content: Text(e.toString()),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                 },
               ),
               SizedBox(height: 20),
@@ -136,11 +215,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
                 child: Text('Sign up', style: TextStyle(fontSize: 15)),
               ),
-            ]
+            ],
           ),
-          
         ),
       ),
     );
   }
 }
+
+
+
+// core/network/auth_interceptor.dar
+
