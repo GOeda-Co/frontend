@@ -1,6 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:frontend/pages/element_colors.dart';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:frontend/api/api.dart';
+import 'package:frontend/app.dart';
+import 'package:frontend/pages/decks/decks_page.dart';
+import 'package:frontend/pages/element_colors.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -11,9 +15,12 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   bool _isObscure = true; // Password visibility
-  final TextEditingController _nameTextController = TextEditingController(); // Text deletion
-  final TextEditingController _emailTextController = TextEditingController(); // Text deletion
-  final TextEditingController _passwordTextController = TextEditingController(); // Text deletion
+  final TextEditingController _nameTextController =
+      TextEditingController(); // Text deletion
+  final TextEditingController _emailTextController =
+      TextEditingController(); // Text deletion
+  final TextEditingController _passwordTextController =
+      TextEditingController(); // Text deletion
 
   @override
   void dispose() {
@@ -25,28 +32,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-      ),
-      body: Center( // Center the entire box horizontally and vertically
+      appBar: AppBar(backgroundColor: Colors.white),
+      body: Center(
+        // Center the entire box horizontally and vertically
         child: Container(
           width: 350, // Specify the desired width of your box
           height: 420, // Specify the desired height of your box
           padding: const EdgeInsets.all(20.0), // Add padding inside the box
           decoration: BoxDecoration(
             color: ElementColors.backgroundColor, // Background color of the box
-            borderRadius: BorderRadius.circular(ElementColors.borderRadius), // Rounded corners
+            borderRadius: BorderRadius.circular(
+              ElementColors.borderRadius,
+            ), // Rounded corners
           ),
-          child: Column( // Center the text within the box
+          child: Column(
+            // Center the text within the box
             children: [
               Text(
-              'Welcome to Repeatro!',
-              textAlign: TextAlign.center, // Center the text itself if it wraps
-              style: TextStyle(
-                fontSize: 24,
-                color: ElementColors.textColor, // Text color
+                'Welcome to Repeatro!',
+                textAlign:
+                    TextAlign.center, // Center the text itself if it wraps
+                style: TextStyle(
+                  fontSize: 24,
+                  color: ElementColors.textColor, // Text color
                 ),
               ),
               SizedBox(height: 20),
@@ -62,10 +71,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   suffixIcon: IconButton(
-                    icon: const Icon(
-                      Icons.delete, 
-                      size: 20
-                      ),
+                    icon: const Icon(Icons.delete, size: 20),
                     onPressed: () {
                       _nameTextController.clear();
                       FocusScope.of(context).requestFocus();
@@ -86,10 +92,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   suffixIcon: IconButton(
-                    icon: const Icon(
-                      Icons.delete, 
-                      size: 20
-                      ),
+                    icon: const Icon(Icons.delete, size: 20),
                     onPressed: () {
                       _emailTextController.clear();
                       FocusScope.of(context).requestFocus();
@@ -118,7 +121,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           _isObscure ? Icons.visibility : Icons.visibility_off,
                           size: 20,
                         ),
-                      
+
                         onPressed: () {
                           setState(() {
                             _isObscure = !_isObscure;
@@ -126,10 +129,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         },
                       ),
                       IconButton(
-                        icon: const Icon(
-                          Icons.delete, 
-                          size: 20
-                          ),
+                        icon: const Icon(Icons.delete, size: 20),
                         onPressed: () {
                           _passwordTextController.clear();
                           FocusScope.of(context).requestFocus();
@@ -141,17 +141,110 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                 style: ElevatedButton.styleFrom(
-                   backgroundColor: ElementColors.buttonColor, //Button color
-                   foregroundColor: Colors.white,
-                   padding: EdgeInsets.symmetric(horizontal: 35, vertical: 17),
-                   shape: RoundedRectangleBorder(
-                     borderRadius: BorderRadius.circular(15.0),
-                   ),
-                 ),
-                 child: Text('Sign Up', style: TextStyle(fontSize: 17)),
-                onPressed: () {
-                  // TODO: Implement sign up logic
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ElementColors.buttonColor, //Button color
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 35, vertical: 17),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                ),
+                child: Text('Sign Up', style: TextStyle(fontSize: 17)),
+                onPressed: () async {
+                  final email = _emailTextController.text.trim();
+                  final password = _passwordTextController.text;
+                  final name = _nameTextController.text.trim();
+
+                  String? errorMessage;
+
+                  if (name.isEmpty) {
+                    errorMessage = 'Name cannot be empty.';
+                  } else if (email.isEmpty ||
+                      !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
+                    errorMessage = 'Enter a valid email address.';
+                  } else if (password.length < 6) {
+                    errorMessage =
+                        'Password must be at least 6 characters long.';
+                  }
+
+                  if (errorMessage != null) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('Invalid Input'),
+                        content: Text(errorMessage!),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
+                    return;
+                  }
+
+                  try {
+                    final responseString = ApiService().register(
+                      email,
+                      password,
+                      name,
+                    );
+
+                    if (responseString == null)
+                      throw Exception("Empty response from server");
+
+                    final json = jsonDecode(responseString.toString());
+                    final userId = json['user_id'];
+                    final message = json['message'];
+
+                    print(userId);
+                    print(message);
+
+                    if (userId != null) {
+                      // Navigate or show success
+                      showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: Text('Success'),
+                          content: Text(message ?? 'Account created.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => AnkiApp()),
+                                );
+                              },
+                              child: Text('Continue'),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      throw Exception(message ?? "Unknown registration error.");
+                    }
+                  } catch (e) {
+                    showDialog(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: Text('Error'),
+                        content: Text(e.toString()),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AnkiApp()),
+                  );
                 },
               ),
               SizedBox(height: 20),
@@ -162,9 +255,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 },
                 child: Text('Login', style: TextStyle(fontSize: 15)),
               ),
-            ]
+            ],
           ),
-          
         ),
       ),
     );
