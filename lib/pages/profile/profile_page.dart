@@ -1,7 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/sso/storage.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
-class ProfileCenter extends StatelessWidget {
+class ProfileCenter extends StatefulWidget {
   const ProfileCenter({super.key});
+
+  @override
+  State<ProfileCenter> createState() => _ProfileCenterState();
+}
+
+class _ProfileCenterState extends State<ProfileCenter> {
+  String? userId;
+  String? email;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserInfo();
+  }
+
+  Future<void> _loadUserInfo() async {
+    final token = await TokenStorage.getToken();
+    if (token == null) return;
+
+    final decoded = JwtDecoder.decode(token);
+
+    setState(() {
+      userId = decoded['id']?.toString() ?? decoded['sub']?.toString();
+      email = decoded['email'];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -9,55 +38,54 @@ class ProfileCenter extends StatelessWidget {
       child: Container(
         width: double.infinity,
         height: 550,
-        // padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface, // или .background
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(24),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          // mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(width: 16),
-                CircleAvatar(
-                  radius: 140,
-                  backgroundColor: Colors.grey.shade300,
-                  backgroundImage: NetworkImage(
-                    'https://avatars.githubusercontent.com/u/57171345?v=4',
-                  ),
-                ),
-                SizedBox(width: 30),
-                RichText(
-                  text: TextSpan(
-                    style: TextStyle(
-                      fontSize: 72,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+        child: userId == null || email == null
+            ? Center(child: CircularProgressIndicator())
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      TextSpan(text: 'Hello, '),
-                      TextSpan(
-                        text: 'John',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                      SizedBox(width: 16),
+                      CircleAvatar(
+                        radius: 140,
+                        backgroundColor: Colors.grey.shade300,
+                        backgroundImage: NetworkImage(
+                          'https://avatars.githubusercontent.com/u/57171345?v=4',
+                        ),
+                      ),
+                      SizedBox(width: 30),
+                      RichText(
+                        text: TextSpan(
+                          style: TextStyle(
+                            fontSize: 72,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                          children: [
+                            TextSpan(text: 'Hello, '),
+                            TextSpan(
+                              text: email?.split('@')[0] ?? '',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 40),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _infoLine('ID:', '29489230859328502', context),
-                _infoLine('Email:', 'Cockroach@mail.ru', context),
-                _infoLine('Registration date:', '12.12.25', context),
-              ],
-            ),
-          ],
-        ),
+                  SizedBox(height: 40),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _infoLine('ID:', userId!, context),
+                      _infoLine('Email:', email!, context),
+                    ],
+                  ),
+                ],
+              ),
       ),
     );
   }
