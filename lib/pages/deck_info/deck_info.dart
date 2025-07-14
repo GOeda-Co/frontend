@@ -24,9 +24,23 @@ class _FlashcardPageState extends State<FlashcardPage> {
   }
 
   void onStudyPressed() {
-    // TODO: Реализовать переход в режим обучения
-    print('Study pressed');
-  }
+  final learningCards = cards.asMap().entries.map((entry) {
+    final index = entry.key;
+    final word = entry.value;
+    return LearningCard(
+      id: index.toString(),       // можно заменить на uuid или backend id
+      front: word,
+      back: 'Значение $word',     // временно; заменишь на реальный перевод/ответ
+    );
+  }).toList();
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => LearningPage(cards: learningCards),
+    ),
+  );
+}
 
   void onDeletePressed() {
     // TODO: Реализовать удаление
