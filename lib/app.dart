@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'layout/app_shell.dart';
-import 'theme.dart';
-import 'util.dart';
+import 'colorscheme/theme.dart';
+import 'colorscheme/util.dart';
 
 class AnkiApp extends StatelessWidget {
   const AnkiApp({super.key});
