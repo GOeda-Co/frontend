@@ -8,6 +8,8 @@ class AuthInterceptor extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     final token = await TokenStorage.getToken();
+    print("TK HERE");
+    print(token);
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
     }

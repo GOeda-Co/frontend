@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/api/api.dart';
+import 'package:frontend/sso/storage.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class CardCreationMenu extends StatefulWidget {
   final void Function(String term, String definition) onCreate;
@@ -12,14 +15,30 @@ class CardCreationMenu extends StatefulWidget {
 class _CardCreationMenuState extends State<CardCreationMenu> {
   final _termController = TextEditingController();
   final _definitionController = TextEditingController();
+  String? userId;
+
+  Future<void> _loadUserInfo() async {
+    final token = await TokenStorage.getToken();
+    if (token == null) return;
+
+    final decoded = JwtDecoder.decode(token);
+
+    setState(() {
+      userId = decoded['id']?.toString() ?? decoded['sub']?.toString();
+    });
+  }
 
   void _submit() {
     final term = _termController.text.trim();
     final def = _definitionController.text.trim();
 
+    _loadUserInfo();
+
     if (term.isNotEmpty && def.isNotEmpty) {
+      // ApiService().dio.addCard();
+      ApiService().addCard(word: term, translation: def);
       widget.onCreate(term, def);
-      Navigator.of(context).pop(); // Закрыть меню
+      Navigator.of(context).pop(); 
     }
   }
 
