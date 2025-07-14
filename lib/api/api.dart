@@ -169,6 +169,77 @@ class ApiService {
     return null;
   }
 
+  static Future<List<Map<String, dynamic>>?> getAllDecksAsSimpleMap() async {
+    final url = Uri.parse('http://localhost:8080/decks');
+
+    try {
+      final response = await dio.get(
+        url.toString(),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode == 200 && response.data is List) {
+        final List decks = response.data;
+
+        return decks.map<Map<String, dynamic>>((deck) {
+          return {
+            'title': deck['name'] ?? 'Untitled',
+            'cards': (deck['cards'] as List?)?.length ?? 0,
+          };
+        }).toList();
+      } else {
+        print('Failed to fetch decks. Status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error while fetching decks: $e');
+    }
+
+    return null;
+  }
+
+  static Future<double?> getAverageGrade() async {
+    final url = Uri.parse('http://localhost:8080/stats/average');
+
+    try {
+      final response = await dio.get(
+        url.toString(),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode == 200) {
+        return (response.data as num).toDouble(); // Handles int/float safely
+      } else {
+        print('Failed to get average grade. Status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error getting average grade: $e');
+    }
+    return null;
+  }
+
+  static Future<int?> getCardsReviewedCount() async {
+    final url = Uri.parse('http://localhost:8080/stats/count');
+
+    try {
+      final response = await dio.get(
+        url.toString(),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode == 200) {
+        return (response.data as num).toInt();
+      } else {
+        print(
+          'Failed to get cards reviewed count. Status: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      print('Error getting reviewed count: $e');
+    }
+
+    return null;
+  }
+
   void dispose() {
     _client.close();
   }
