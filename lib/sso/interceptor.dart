@@ -15,7 +15,7 @@ class AuthInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) async {
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
       final newToken = await TokenStorage.getToken();
       err.requestOptions.headers['Authorization'] = 'Bearer $newToken';

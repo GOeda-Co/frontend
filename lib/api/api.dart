@@ -79,6 +79,7 @@ class ApiService {
     } catch (e) {
       print('Error: $e');
     }
+    return null;
   }
 
   void decodeToken(String token) {
@@ -124,6 +125,7 @@ class ApiService {
     } catch (e) {
       print('Error: $e');
     }
+    return null;
   }
   // Health check endpoint
   // Future<Map<String, dynamic>> healthCheck() async {
