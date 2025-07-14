@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 
 class TopBar extends StatelessWidget {
   final String title;
+  final List<Widget>? actions;
 
-  const TopBar({super.key, required this.title});
+  const TopBar({
+    super.key,
+    required this.title, 
+    this.actions
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +26,14 @@ class TopBar extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
+          
           const Spacer(),
+          
+          // Check if actions exist and are not empty
+          if (actions != null && actions!.isNotEmpty) 
+              Row(
+                children: actions!,
+              ),
         ],
       ),
     );

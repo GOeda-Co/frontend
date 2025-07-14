@@ -3,6 +3,7 @@ import 'package:frontend/pages/profile/profile_page.dart';
 import '../pages/decks/decks_page.dart';
 import '../pages/cards/presentation/pages/cards_page.dart';
 import '../widgets/top_bar.dart';
+import '../pages/create_deck/create_deck.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
@@ -14,12 +15,34 @@ class AppShell extends StatefulWidget {
 class _AppShellState extends State<AppShell> {
   int selectedIndex = 0;
 
-  final List<String> titles = ['Decks', 'Cards', 'Profile'];
-  final List<Widget> pages = const [DecksPage(), CardsPage(), ProfileCenter()];
+  final List<String> titles = ['Decks', 'Cards', 'Create new Deck', 'Profile'];
+  final List<Widget> pages = const [DecksPage(), CardsPage(), CreateDeckPage(), ProfileCenter()];
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+
+    final createButton = TextButton(
+      style: TextButton.styleFrom(
+        backgroundColor: colors.primary,
+        foregroundColor: colors.onPrimary,
+        minimumSize: const Size(100, 50),
+      ),
+      onPressed: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Create Deck button pressed!')),
+        );
+        setState(() {
+          selectedIndex = 0;
+        });
+      },
+      child: Text(
+        'Create',
+        style: TextStyle(
+          fontSize: 20,
+          ),
+      ),
+    );
 
     return Scaffold(
       backgroundColor: colors.surfaceContainerLowest,
@@ -44,24 +67,27 @@ class _AppShellState extends State<AppShell> {
                 // Нижние кнопки
                 IconButton(
                   icon: Icon(Icons.add),
-                  onPressed: () {},
+                  onPressed: () {
+                    setState(() => selectedIndex = 2);
+
+                  },
                   tooltip: 'Add',
                 ),
                 const SizedBox(height: 8),
                 InkWell(
                   onTap: () {
-                    setState(() => selectedIndex = 2);
+                    setState(() => selectedIndex = 3);
                   },
                   borderRadius: BorderRadius.circular(50),
                   child: CircleAvatar(
                     radius: 16,
-                    backgroundColor: selectedIndex == 2
+                    backgroundColor: selectedIndex == 3
                         ? colors.primary
                         : colors.surfaceContainerHighest,
                     child: Icon(
                       Icons.person,
                       size: 18,
-                      color: selectedIndex == 2
+                      color: selectedIndex == 3
                           ? colors.onPrimary
                           : colors.onSurface,
                     ),
@@ -84,7 +110,12 @@ class _AppShellState extends State<AppShell> {
                 clipBehavior: Clip.antiAlias,
                 child: Column(
                   children: [
-                    TopBar(title: titles[selectedIndex]),
+                    TopBar(
+                      title: titles[selectedIndex],
+                      actions: selectedIndex == 2 // If it's the "Create new Deck" page (index 2)
+                          ? [createButton]        // Provide the 'Create' button
+                          : [],                   // Otherwise, provide an empty list (no actions)
+                    ),
                     const Divider(height: 1),
                     Expanded(child: pages[selectedIndex]),
                   ],
