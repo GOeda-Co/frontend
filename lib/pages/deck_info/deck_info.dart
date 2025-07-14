@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/layout/app_shell.dart';
+import 'package:frontend/features/learning/presentation/pages/learning_page.dart';
+import 'package:frontend/features/learning/domain/entities/learning_card.dart';
 
 class FlashcardPage extends StatefulWidget {
   const FlashcardPage({super.key});
@@ -25,9 +27,23 @@ class _FlashcardPageState extends State<FlashcardPage> {
   }
 
   void onStudyPressed() {
-    // TODO: Реализовать переход в режим обучения
-    print('Study pressed');
-  }
+  final learningCards = cards.asMap().entries.map((entry) {
+    final index = entry.key;
+    final word = entry.value;
+    return LearningCard(
+      id: index.toString(),       // можно заменить на uuid или backend id
+      front: word,
+      back: 'Значение $word',     // временно; заменишь на реальный перевод/ответ
+    );
+  }).toList();
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => LearningPage(cards: learningCards),
+    ),
+  );
+}
 
   void onDeletePressed() {
     // TODO: Реализовать удаление
