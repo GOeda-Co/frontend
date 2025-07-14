@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/profile/profile_page.dart';
 import '../pages/decks/decks_page.dart';
-import '../pages/cards/cards_page.dart';
+import '../pages/cards/presentation/pages/cards_page.dart';
 import '../widgets/top_bar.dart';
 
 class AppShell extends StatefulWidget {
