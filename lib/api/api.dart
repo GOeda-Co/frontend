@@ -79,6 +79,7 @@ class ApiService {
     } catch (e) {
       print('Error: $e');
     }
+    return null;
   }
 
   void decodeToken(String token) {
@@ -98,13 +99,7 @@ class ApiService {
   Future<String?> login(String email, String password, int appId) async {
     try {
       final userUpdateUrl = Uri.parse('http://localhost:8080/login');
-      // final request = RegisterMessageRequest(
-      //   email: "asa@mail.ru",
-      //   password: "cock",
-      //   name: "name",
-      // );
-      //
-      // final userUpdate = {'id': userId, 'name': name, 'email': email};
+
       final userUpdateResponse = await http.post(
         userUpdateUrl,
         body: jsonEncode({
@@ -124,24 +119,55 @@ class ApiService {
     } catch (e) {
       print('Error: $e');
     }
+    return null;
   }
-  // Health check endpoint
-  // Future<Map<String, dynamic>> healthCheck() async {
-  //   try {
-  //     final response = await _client.get(
-  //       Uri.parse('http://localhost:8080/health'),
-  //       headers: {'Content-Type': 'application/json'},
-  //     );
 
-  //     if (response.statusCode == 200) {
-  //       return json.decode(response.body);
-  //     } else {
-  //       throw ApiException('Health check failed', response.statusCode);
-  //     }
-  //   } catch (e) {
-  //     throw ApiException('Failed to connect to server: $e');
-  //   }
-  // }
+  Future<String?> addCard({
+    required String word,
+    required String translation,
+  }) async {
+    final url = Uri.parse('http://localhost:8080/cards');
+
+    final cardData = {'word': word, 'translation': translation};
+
+    try {
+      final response = await ApiService.dio.post(
+        'http://localhost:8080/cards',
+        data: cardData,
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response.data;
+      } else {
+        print('Failed to add card. Status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error while adding card: $e');
+    }
+    return null;
+  }
+
+  static Future<List<dynamic>?> getAllCards() async {
+    final url = Uri.parse('http://localhost:8080/cards');
+
+    try {
+      final response = await dio.get(
+        url.toString(),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data; // List of card maps
+      } else {
+        print('Failed to fetch cards. Status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error while fetching cards: $e');
+    }
+
+    return null;
+  }
 
   void dispose() {
     _client.close();

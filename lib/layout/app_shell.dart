@@ -14,7 +14,7 @@ class AppShell extends StatefulWidget {
 class _AppShellState extends State<AppShell> {
   int selectedIndex = 0;
 
-  final List<String> titles = ['Decks', 'Stats', 'Profile'];
+  final List<String> titles = ['Decks', 'Cards', 'Profile'];
   final List<Widget> pages = const [DecksPage(), CardsPage(), ProfileCenter()];
 
   @override
@@ -38,7 +38,7 @@ class _AppShellState extends State<AppShell> {
                 // Верхние кнопки
                 const SizedBox(height: 16),
                 _buildNavItem(0, Icons.library_books, 'Decks'),
-                _buildNavItem(1, Icons.insights, 'Stats'),
+                _buildNavItem(1, Icons.insights, 'Cards'),
 
                 Spacer(), // Отделяет верх от низа
                 // Нижние кнопки

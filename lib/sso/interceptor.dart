@@ -8,6 +8,8 @@ class AuthInterceptor extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     final token = await TokenStorage.getToken();
+    print("TK HERE");
+    print(token);
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
     }
@@ -15,7 +17,7 @@ class AuthInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) async {
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
       final newToken = await TokenStorage.getToken();
       err.requestOptions.headers['Authorization'] = 'Bearer $newToken';

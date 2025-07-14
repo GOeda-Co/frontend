@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/api/api.dart';
 import '../widgets/card_item.dart';
 import '../widgets/card_creation_menu.dart';
 
@@ -10,10 +11,28 @@ class CardsPage extends StatefulWidget {
 }
 
 class _CardsPageState extends State<CardsPage> {
-  final List<String> _cards = [
-    'Hello', 'House', 'Sun', 'Tree', 'Moon', 'Star', 'Cloud', 'Rain',
-    'Book', 'Pen', 'Phone', 'Laptop', 'Table', 'Chair', 'Car', 'Bike',
-  ];
+  final List<String> _cards = [];
+
+  void loadCards() async {
+    final parsedJson = await ApiService.getAllCards();
+
+    if (parsedJson != null) {
+      setState(() {
+        _cards.clear();
+        _cards.addAll(
+          parsedJson
+              .map<String>((card) => '${card['word']} - ${card['translation']}')
+              .toList(),
+        );
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadCards();
+  }
 
   void _showCreationMenu() {
     showDialog(
@@ -21,7 +40,7 @@ class _CardsPageState extends State<CardsPage> {
       builder: (context) => CardCreationMenu(
         onCreate: (term, definition) {
           setState(() {
-            _cards.add(term); // или создавай объект и добавляй
+            _cards.add(term);
           });
         },
       ),

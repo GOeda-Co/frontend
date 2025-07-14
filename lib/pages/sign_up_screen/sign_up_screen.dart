@@ -191,9 +191,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       name,
                     );
 
-                    if (responseString == null)
-                      throw Exception("Empty response from server");
-
                     final json = jsonDecode(responseString.toString());
                     final userId = json['user_id'];
                     final message = json['message'];

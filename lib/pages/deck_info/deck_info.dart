@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/layout/app_shell.dart';
-import 'package:frontend/features/learning/presentation/pages/learning_page.dart';
-import 'package:frontend/features/learning/domain/entities/learning_card.dart';
 
 class FlashcardPage extends StatefulWidget {
   const FlashcardPage({super.key});
