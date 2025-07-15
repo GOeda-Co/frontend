@@ -12,6 +12,7 @@ class CardsPage extends StatefulWidget {
 
 class _CardsPageState extends State<CardsPage> {
   final List<String> _cards = [];
+  final List<Map<String, String>> _cardsNew = [];
 
   void loadCards() async {
     final parsedJson = await ApiService.getAllCards();
@@ -22,6 +23,16 @@ class _CardsPageState extends State<CardsPage> {
         _cards.addAll(
           parsedJson
               .map<String>((card) => '${card['word']} - ${card['translation']}')
+              .toList(),
+        );
+        _cardsNew.addAll(
+          parsedJson
+              .map<Map<String, String>>(
+                (card) => {
+                  'word': card['word'],
+                  'translation': card['translation'],
+                },
+              )
               .toList(),
         );
       });
@@ -82,7 +93,7 @@ class _CardsPageState extends State<CardsPage> {
             const SizedBox(height: 12),
             Expanded(
               child: GridView.builder(
-                itemCount: _cards.length,
+                itemCount: _cardsNew.length,
                 padding: const EdgeInsets.only(top: 8),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
@@ -91,7 +102,11 @@ class _CardsPageState extends State<CardsPage> {
                   childAspectRatio: 0.9,
                 ),
                 itemBuilder: (context, index) {
-                  return CardItem(word: _cards[index]);
+                  final card = _cardsNew[index];
+                  return CardItem(
+                    word: card['word']!,
+                    translation: card['translation']!,
+                  );
                 },
               ),
             ),

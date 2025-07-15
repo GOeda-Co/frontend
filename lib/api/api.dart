@@ -148,7 +148,6 @@ class ApiService {
     return null;
   }
 
-
   Future<String?> addCardString({
     required String word,
     required String translation,
@@ -174,7 +173,6 @@ class ApiService {
     }
     return null;
   }
-
 
   static Future<List<dynamic>?> getAllCards() async {
     final url = Uri.parse('http://localhost:8080/cards');
@@ -203,10 +201,7 @@ class ApiService {
   }) async {
     final url = Uri.parse('http://localhost:8080/decks');
 
-    final deckData = {
-      'name': name,
-      'description': description,
-    };
+    final deckData = {'name': name, 'description': description};
 
     try {
       final response = await ApiService.dio.post(
@@ -222,6 +217,8 @@ class ApiService {
       }
     } catch (e) {
       print('Error while adding deck: $e');
+    }
+  }
 
   static Future<List<Map<String, dynamic>>?> getAllDecksAsSimpleMap() async {
     final url = Uri.parse('http://localhost:8080/decks');
@@ -251,51 +248,6 @@ class ApiService {
     return null;
   }
 
-
-  Future<bool> addCardToDeck({
-  required String deckId,
-  required String cardId,
-}) async {
-  final url = Uri.parse('http://localhost:8080/decks/$deckId/cards/$cardId');
-
-  try {
-    final response = await ApiService.dio.post(
-      url.toString(),
-      options: Options(headers: {'Content-Type': 'application/json'}),
-    );
-
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      print('Failed to add card to deck. Status: ${response.statusCode}');
-    }
-  } catch (e) {
-    print('Error while adding card to deck: $e');
-  }
-
-  return false;
-}
-      
-  static Future<double?> getAverageGrade() async {
-    final url = Uri.parse('http://localhost:8080/stats/average');
-
-    try {
-      final response = await dio.get(
-        url.toString(),
-        options: Options(headers: {'Content-Type': 'application/json'}),
-      );
-
-      if (response.statusCode == 200) {
-        return (response.data as num).toDouble(); // Handles int/float safely
-      } else {
-        print('Failed to get average grade. Status: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error getting average grade: $e');
-    }
-    return null;
-  }
-
   static Future<int?> getCardsReviewedCount() async {
     final url = Uri.parse('http://localhost:8080/stats/count');
 
@@ -316,6 +268,49 @@ class ApiService {
       print('Error getting reviewed count: $e');
     }
 
+    return null;
+  }
+
+  Future<bool> addCardToDeck({
+    required String deckId,
+    required String cardId,
+  }) async {
+    final url = Uri.parse('http://localhost:8080/decks/$deckId/cards/$cardId');
+
+    try {
+      final response = await ApiService.dio.post(
+        url.toString(),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        print('Failed to add card to deck. Status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error while adding card to deck: $e');
+    }
+    return false;
+  }
+
+  static Future<double?> getAverageGrade() async {
+    final url = Uri.parse('http://localhost:8080/stats/average');
+
+    try {
+      final response = await dio.get(
+        url.toString(),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode == 200) {
+        return (response.data as num).toDouble(); // Handles int/float safely
+      } else {
+        print('Failed to get average grade. Status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error getting average grade: $e');
+    }
     return null;
   }
 
