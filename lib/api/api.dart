@@ -346,6 +346,26 @@ class ApiService {
     }
   }
 
+  Future<bool> submitAnswers(List<Map<String, dynamic>> answers, String deckId) async {
+    try {
+      final response = await dio.post(
+        'http://localhost:8080/decks/$deckId/answers',
+        data: answers,
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Answers submitted successfully');
+        return true;
+      } else {
+        print('Failed to submit answers. Status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error submitting answers: $e');
+    }
+    return false;
+  }
+
   void dispose() {
     _client.close();
   }
