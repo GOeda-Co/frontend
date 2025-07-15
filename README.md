@@ -14,11 +14,11 @@
   <h3 align="center">Repeatro Frontend</h3>
   <p align="center">
     A modern Flutter web/mobile client for the Repeatro spaced repetition vocabulary app.<br />
-    <a href="https://github.com/tomatoCoderq/repeatro"><strong>Backend Repo »</strong></a>
+    <a href="https://github.com/GOeda-Co/backend"><strong>Backend Repo »</strong></a>
     <br />
-    <a href="https://github.com/tomatoCoderq/repeatro/issues">Issues</a>
+    <a href="https://github.com/GOeda-Co/frontend/issues">Issues</a>
     &middot;
-    <a href="https://github.com/tomatoCoderq/repeatro/pulls">Pull Requests</a>
+    <a href="https://github.com/GOeda-Co/frontend/pulls">Pull Requests</a>
   </p>
 </div>
 
@@ -84,8 +84,8 @@ To get a local copy up and running, follow these steps.
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/tomatoCoderq/repeatro.git
-   cd repeatro/frontend
+   git clone https://github.com/GOeda-Co/frontend.git
+   cd frontend
    ```
 2. Install dependencies
    ```sh
@@ -153,9 +153,12 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-Maintainer: [@tomatoCoderq](https://github.com/tomatoCoderq)
+Maintainers: <br>
+[@tomatoCoderq](https://github.com/tomatoCoderq) <br>
+[@constable](https://github.com/constable) <br>
+[@Kaghorz](https://github.com/tomatoCoderq)<br>
 
-Project Link: [https://github.com/tomatoCoderq/repeatro](https://github.com/tomatoCoderq/repeatro)
+Project Link: [https://github.com/GOeda-Co/frontend](https://github.com/GOeda-Co/frontend)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -169,8 +172,8 @@ Project Link: [https://github.com/tomatoCoderq/repeatro](https://github.com/toma
 
 ## Contributors
 
-<a href="https://github.com/tomatoCoderq/repeatro/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=tomatoCoderq/repeatro" alt="Contributors" />
+<a href="https://github.com/GOeda-Co/frontend/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=GOeda-Co/frontend" alt="Contributors" />
 </a>
 
 **Project contributors:**
@@ -181,13 +184,13 @@ Project Link: [https://github.com/tomatoCoderq/repeatro](https://github.com/toma
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
-[contributors-shield]: https://img.shields.io/github/contributors/tomatoCoderq/repeatro.svg?style=for-the-badge
-[contributors-url]: https://github.com/tomatoCoderq/repeatro/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/tomatoCoderq/repeatro.svg?style=for-the-badge
-[forks-url]: https://github.com/tomatoCoderq/repeatro/network/members
-[stars-shield]: https://img.shields.io/github/stars/tomatoCoderq/repeatro.svg?style=for-the-badge
-[stars-url]: https://github.com/tomatoCoderq/repeatro/stargazers
-[issues-shield]: https://img.shields.io/github/issues/tomatoCoderq/repeatro.svg?style=for-the-badge
-[issues-url]: https://github.com/tomatoCoderq/repeatro/issues
-[license-shield]: https://img.shields.io/github/license/tomatoCoderq/repeatro.svg?style=for-the-badge
-[license-url]: https://github.com/tomatoCoderq/repeatro/blob/main/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/GOeda-Co/frontend.svg?style=for-the-badge
+[contributors-url]: https://github.com/GOeda-Co/frontend/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/GOeda-Co/frontend.svg?style=for-the-badge
+[forks-url]: https://github.com/GOeda-Co/frontend/network/members
+[stars-shield]: https://img.shields.io/github/stars/GOeda-Co/frontend.svg?style=for-the-badge
+[stars-url]: https://github.com/GOeda-Co/frontend/stargazers
+[issues-shield]: https://img.shields.io/github/issues/GOeda-Co/frontend.svg?style=for-the-badge
+[issues-url]: https://github.com/GOeda-Co/frontend/issues
+[license-shield]: https://img.shields.io/github/license/GOeda-Co/frontend.svg?style=for-the-badge
+[license-url]: https://github.com/GOeda-Co/frontend/blob/main/LICENSE
