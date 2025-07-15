@@ -148,6 +148,34 @@ class ApiService {
     return null;
   }
 
+
+  Future<String?> addCardString({
+    required String word,
+    required String translation,
+  }) async {
+    final url = Uri.parse('http://localhost:8080/cards');
+
+    final cardData = {'word': word, 'translation': translation};
+
+    try {
+      final response = await ApiService.dio.post(
+        'http://localhost:8080/cards',
+        data: cardData,
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response.data['card_id'];
+      } else {
+        print('Failed to add card. Status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error while adding card: $e');
+    }
+    return null;
+  }
+
+
   static Future<List<dynamic>?> getAllCards() async {
     final url = Uri.parse('http://localhost:8080/cards');
 
@@ -168,6 +196,60 @@ class ApiService {
 
     return null;
   }
+
+  Future<Map<String, dynamic>?> addDeck({
+    required String name,
+    required String description,
+  }) async {
+    final url = Uri.parse('http://localhost:8080/decks');
+
+    final deckData = {
+      'name': name,
+      'description': description,
+    };
+
+    try {
+      final response = await ApiService.dio.post(
+        url.toString(),
+        data: deckData,
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response.data;
+      } else {
+        print('Failed to add deck. Status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error while adding deck: $e');
+    }
+
+    return null;
+  }
+
+  Future<bool> addCardToDeck({
+  required String deckId,
+  required String cardId,
+}) async {
+  final url = Uri.parse('http://localhost:8080/decks/$deckId/cards/$cardId');
+
+  try {
+    final response = await ApiService.dio.post(
+      url.toString(),
+      options: Options(headers: {'Content-Type': 'application/json'}),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print('Failed to add card to deck. Status: ${response.statusCode}');
+    }
+  } catch (e) {
+    print('Error while adding card to deck: $e');
+  }
+
+  return false;
+}
 
   void dispose() {
     _client.close();

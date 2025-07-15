@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/api/api.dart';
+import 'package:frontend/app.dart';
 import 'package:frontend/pages/element_colors.dart';
-
 
 class CreateDeckPage extends StatelessWidget {
   const CreateDeckPage({super.key});
@@ -12,20 +14,15 @@ class CreateDeckPage extends StatelessWidget {
         padding: const EdgeInsets.only(left: 25.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Expanded(
-              child: _DeckForm(),
-            ),
-          ]
+          children: const [Expanded(child: _DeckForm())],
         ),
       ),
     );
   }
 }
 
-// Define a simple model for your card data, including unique ID and text controllers
 class Flashcard {
-  final String id; // Unique ID for each card
+  final String id;
   final TextEditingController wordController;
   final TextEditingController translationController;
 
@@ -36,7 +33,6 @@ class Flashcard {
   });
 }
 
-
 class _DeckForm extends StatefulWidget {
   const _DeckForm({super.key});
 
@@ -45,26 +41,90 @@ class _DeckForm extends StatefulWidget {
 }
 
 class _DeckFormState extends State<_DeckForm> {
-  // Use a List of your custom Flashcard objects
-  final List<Flashcard> _flashcards = []; 
+  final List<Flashcard> _flashcards = [];
+  final TextEditingController _deckNameController = TextEditingController();
+  final TextEditingController _deckDescriptionController =
+      TextEditingController();
 
-  // Initialize some cards on initState if you want them pre-filled
   @override
   void initState() {
     super.initState();
-    // Add 3 initial cards
     for (int i = 0; i < 3; i++) {
-      _addCard(); 
+      _addCard();
+    }
+  }
+
+  Future<void> createDeckWithCards({
+    required String name,
+    required String description,
+    required List<Map<String, String>>
+    cards, // List of {'word': ..., 'translation': ...}
+  }) async {
+    // STEP 0: Create deck and get deck_id
+    final response = await ApiService.dio.post(
+      'http://localhost:8080/decks',
+      data: {'name': name, 'description': description},
+      options: Options(headers: {'Content-Type': 'application/json'}),
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      print('Failed to create deck. Status: ${response.statusCode}');
+      return;
+    }
+
+    final Map<String, dynamic> deckData = response.data;
+    final String deckId = deckData['deck_id'];
+    print('Created deck with ID: $deckId');
+
+    // STEP 1: Add each card and get card_id
+    for (final card in cards) {
+      final cardId = await ApiService().addCardString(
+        word: card['word'] ?? '',
+        translation: card['translation'] ?? '',
+      );
+      // String? cardId = result?['card_id']?.toString();
+
+      if (cardId == null) {
+        print('Skipping card: failed to add ${card['word']}');
+        continue;
+      }
+
+      // STEP 2: Link card to deck
+      final addToDeckSuccess = await ApiService().addCardToDeck(
+        deckId: deckId,
+        cardId: cardId,
+      );
+
+      if (addToDeckSuccess) {
+        print('Card $cardId added to deck $deckId');
+      } else {
+        print('Failed to add card $cardId to deck $deckId');
+      }
     }
   }
 
   @override
   void dispose() {
+    _deckNameController.dispose();
+    _deckDescriptionController.dispose();
     for (var card in _flashcards) {
       card.wordController.dispose();
       card.translationController.dispose();
     }
     super.dispose();
+  }
+
+  void _addCard() {
+    setState(() {
+      final String uniqueId = DateTime.now().microsecondsSinceEpoch.toString();
+      _flashcards.add(
+        Flashcard(
+          id: uniqueId,
+          wordController: TextEditingController(),
+          translationController: TextEditingController(),
+        ),
+      );
+    });
   }
 
   void _removeCard(int index) {
@@ -75,16 +135,60 @@ class _DeckFormState extends State<_DeckForm> {
     });
   }
 
-  void _addCard() {
-    setState(() {
-      final String uniqueId = DateTime.now().microsecondsSinceEpoch.toString();
+  Future<void> _submitDeck() async {
+    final name = _deckNameController.text.trim();
+    final description = _deckDescriptionController.text.trim();
 
-      _flashcards.add(Flashcard(
-        id: uniqueId,
-        wordController: TextEditingController(),
-        translationController: TextEditingController(),
-      ));
-    });
+    if (name.isEmpty || description.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Deck name and description are required')),
+      );
+      return;
+    }
+
+    final List<Map<String, String>> cards = _flashcards
+        .where(
+          (card) =>
+              card.wordController.text.trim().isNotEmpty &&
+              card.translationController.text.trim().isNotEmpty,
+        )
+        .map(
+          (card) => {
+            'word': card.wordController.text.trim(),
+            'translation': card.translationController.text.trim(),
+          },
+        )
+        .toList();
+
+    if (cards.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please add at least one card')),
+      );
+      return;
+    }
+
+    await createDeckWithCards(
+      name: name,
+      description: description,
+      cards: cards,
+    );
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Deck and cards submitted')));
+
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const AnkiApp(),
+        ), // or your home screen
+      );
+    }
   }
 
   @override
@@ -94,27 +198,23 @@ class _DeckFormState extends State<_DeckForm> {
       children: [
         const SizedBox(height: 16),
         TextField(
+          controller: _deckNameController,
           decoration: InputDecoration(
             hintText: 'Enter title',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           ),
         ),
         const SizedBox(height: 16),
         TextField(
+          controller: _deckDescriptionController,
           decoration: InputDecoration(
             hintText: 'Enter description',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           ),
         ),
         const SizedBox(height: 16),
-
         ...List.generate(_flashcards.length, (index) {
-          final Flashcard currentCard = _flashcards[index];
-
+          final card = _flashcards[index];
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Container(
@@ -124,73 +224,52 @@ class _DeckFormState extends State<_DeckForm> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
+                      border: const Border(
+                        bottom: BorderSide(color: Colors.purple),
+                      ),
+                      borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(10),
                         topRight: Radius.circular(10),
                       ),
-                      border: Border(bottom: BorderSide(color: Colors.purple))
                     ),
-                    child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 8, 8, 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           '${index + 1}',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.black87),
+                          icon: const Icon(Icons.delete),
                           onPressed: () => _removeCard(index),
                         ),
                       ],
                     ),
-                  ), 
                   ),
-
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
                     child: Row(
                       children: [
                         Expanded(
                           child: TextField(
-                            controller: currentCard.wordController,
-                            decoration: InputDecoration(
+                            controller: card.wordController,
+                            decoration: const InputDecoration(
                               hintText: 'Word',
-                              border: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.purple),
-                              ),
-                              isDense: true,
-                              contentPadding: EdgeInsets.only(top: 10, bottom: 10),
+                              border: UnderlineInputBorder(),
                             ),
                           ),
                         ),
-                        VerticalDivider(
-                          width: 40,
-                          thickness: 1,
-                          indent: 8,
-                          endIndent: 8,
-                          color: Colors.grey[400],
-                        ),
+                        const VerticalDivider(width: 40),
                         Expanded(
                           child: TextField(
-                            controller: currentCard.translationController,
+                            controller: card.translationController,
                             decoration: const InputDecoration(
                               hintText: 'Translation',
-                              border: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.purple),
-                              ),
-                              isDense: true,
-                              contentPadding: EdgeInsets.only(top: 10, bottom: 10),
+                              border: UnderlineInputBorder(),
                             ),
                           ),
                         ),
@@ -212,9 +291,18 @@ class _DeckFormState extends State<_DeckForm> {
               backgroundColor: ElementColors.buttonColor,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+        Center(
+          child: ElevatedButton(
+            onPressed: _submitDeck,
+            child: const Text('Create Deck'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
             ),
           ),
         ),
