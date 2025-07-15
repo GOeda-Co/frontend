@@ -59,9 +59,9 @@ class _StatsSectionState extends State<StatsSection> {
               label: 'average grade',
             ),
             const StatCard(
-              value: '241',
-              unit: 'words',
-              label: 'already learned',
+              value: 'You',
+              unit: 'are',
+              label: 'perfect!',
             ),
           ],
         ),
