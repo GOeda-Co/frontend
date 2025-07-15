@@ -12,7 +12,7 @@ class ProfileCenter extends StatefulWidget {
 class _ProfileCenterState extends State<ProfileCenter> {
   String? userId;
   String? email;
-  String? name;
+  String? name = "BRO";
 
   @override
   void initState() {
@@ -22,9 +22,15 @@ class _ProfileCenterState extends State<ProfileCenter> {
 
   Future<void> _loadUserInfo() async {
     final token = await TokenStorage.getToken();
-    if (token == null) return;
+
+    if (token == null) {
+      print('⚠️ No token found. Check if user is logged in.');
+      return;
+    }
 
     final decoded = JwtDecoder.decode(token);
+    print('🔓 Decoded token: $decoded');
+    
 
     setState(() {
       userId = decoded['id']?.toString() ?? decoded['sub']?.toString();
@@ -61,19 +67,21 @@ class _ProfileCenterState extends State<ProfileCenter> {
                         ),
                       ),
                       SizedBox(width: 30),
-                      RichText(
-                        text: TextSpan(
-                          style: TextStyle(
-                            fontSize: 72,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
-                          children: [
-                            TextSpan(text: 'Hello, '),
-                            TextSpan(
-                              text: name ?? '',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 72,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
-                          ],
+                            children: [
+                              TextSpan(text: 'Hello, '),
+                              TextSpan(
+                                text: name ?? '',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],

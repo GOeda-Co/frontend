@@ -235,7 +235,8 @@ class ApiService {
         return decks.map<Map<String, dynamic>>((deck) {
           return {
             'title': deck['name'] ?? 'Untitled',
-            'cards': (deck['cards'] as List?)?.length ?? 0,
+            'cards': deck['cards_quantity'] ?? 0,
+            'deck_id': deck['deck_id'] ?? 0,
           };
         }).toList();
       } else {
@@ -312,6 +313,37 @@ class ApiService {
       print('Error getting average grade: $e');
     }
     return null;
+  }
+
+  Future<List<dynamic>?> getCardsByDeckId(String deckId) async {
+    final url = Uri.parse('http://localhost:8080/decks/$deckId/cards');
+
+    try {
+      final response = await dio.get(
+        url.toString(),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data as List;
+      } else {
+        print('Failed to fetch cards for deck. Status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching deck cards: $e');
+    }
+
+    return null;
+  }
+
+  Future<bool> deleteDeck(String deckId) async {
+    try {
+      final response = await dio.delete('http://localhost:8080/decks/$deckId');
+      return response.statusCode == 200;
+    } catch (e) {
+      print('Error deleting deck: $e');
+      return false;
+    }
   }
 
   void dispose() {

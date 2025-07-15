@@ -29,6 +29,7 @@ class _CardItemState extends State<CardItem> {
 
     return GestureDetector(
       onTap: _toggleSide,
+      
       child: Container(
         decoration: BoxDecoration(
           color: colors.primaryContainer,

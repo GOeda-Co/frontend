@@ -60,9 +60,11 @@ class _RecentsSectionState extends State<RecentsSection> {
                 title: item['title'],
                 cardCount: item['cards'],
                 onIconTap: () {
+                  print(item['deck_id']);
+                  print(item['title']);
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => FlashcardPage()),
+                    MaterialPageRoute(builder: (context) => FlashcardPage(deckId: item['deck_id'], deckName: item['title'],)),
                   );
                   debugPrint('Tapped icon on ${item['title']}');
                 },
