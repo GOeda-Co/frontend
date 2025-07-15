@@ -12,6 +12,7 @@ class ProfileCenter extends StatefulWidget {
 class _ProfileCenterState extends State<ProfileCenter> {
   String? userId;
   String? email;
+  String? name;
 
   @override
   void initState() {
@@ -28,6 +29,7 @@ class _ProfileCenterState extends State<ProfileCenter> {
     setState(() {
       userId = decoded['id']?.toString() ?? decoded['sub']?.toString();
       email = decoded['email'];
+      name = decoded['name'];
     });
   }
 
@@ -42,7 +44,7 @@ class _ProfileCenterState extends State<ProfileCenter> {
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(24),
         ),
-        child: userId == null || email == null
+        child: userId == null || email == null || name == null
             ? Center(child: CircularProgressIndicator())
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -68,7 +70,7 @@ class _ProfileCenterState extends State<ProfileCenter> {
                           children: [
                             TextSpan(text: 'Hello, '),
                             TextSpan(
-                              text: email?.split('@')[0] ?? '',
+                              text: name ?? '',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
