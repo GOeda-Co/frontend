@@ -24,28 +24,6 @@ class _AppShellState extends State<AppShell> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    // final createButton = TextButton(
-    //   style: TextButton.styleFrom(
-    //     backgroundColor: colors.primary,
-    //     foregroundColor: colors.onPrimary,
-    //     minimumSize: const Size(100, 50),
-    //   ),
-    //   onPressed: () {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       const SnackBar(content: Text('Create Deck button pressed!')),
-    //     );
-    //     setState(() {
-    //       selectedIndex = 0;
-    //     });
-    //   },
-    //   child: Text(
-    //     'Create',
-    //     style: TextStyle(
-    //       fontSize: 20,
-    //       ),
-    //   ),
-    // );
-
     return Scaffold(
       backgroundColor: colors.surfaceContainerLowest,
       body: Row(

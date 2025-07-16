@@ -126,10 +126,6 @@ class _MyLandingPageState extends State<MyLandingPage> {
                     style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                 ),
-                //TODO: Remove this button
-                ElevatedButton(onPressed: () {
-                  Navigator.pushNamed(context, '/app-shell');
-                }, child: const Text('TEMP:App Shell'))
               ],
             ),
           )

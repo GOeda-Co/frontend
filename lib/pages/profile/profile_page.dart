@@ -68,7 +68,7 @@ class _ProfileCenterState extends State<ProfileCenter> {
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
-                        ),
+                        )
                       ),
                       SizedBox(width: 30),
                       Expanded(
