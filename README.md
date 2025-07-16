@@ -11,8 +11,8 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <h3 align="center">Repeatro Frontend</h3>
   <img src="Logo.png" alt="Logo" width="80" height="80">
+  <h3 align="center">Repeatro Frontend</h3>
   <p align="center">
     A modern Flutter web/mobile client for the Repeatro spaced repetition vocabulary app.<br />
     <a href="https://github.com/GOeda-Co/backend"><strong>Backend Repo »</strong></a>
