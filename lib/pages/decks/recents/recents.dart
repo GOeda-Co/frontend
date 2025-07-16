@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api.dart';
 import 'package:frontend/pages/deck_info/deck_info.dart';
-import 'package:frontend/pages/decks/recents/recents_deck_card.dart';
+import 'recents_deck_card.dart';
 
 class RecentsSection extends StatefulWidget {
   const RecentsSection({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api.dart';
-import 'package:frontend/pages/decks/stats/stats_card.dart';
+import 'stats_card.dart';
 
 class StatsSection extends StatefulWidget {
   const StatsSection({super.key});
