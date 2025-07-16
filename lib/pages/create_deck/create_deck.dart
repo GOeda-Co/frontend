@@ -192,7 +192,9 @@ class _DeckFormState extends State<_DeckForm> {
           controller: _deckNameController,
           decoration: InputDecoration(
             hintText: 'Enter title',
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10), 
+              borderSide: BorderSide(color: Colors.purple, width: 1.0)),
           ),
         ),
         const SizedBox(height: 16),
@@ -200,7 +202,9 @@ class _DeckFormState extends State<_DeckForm> {
           controller: _deckDescriptionController,
           decoration: InputDecoration(
             hintText: 'Enter description',
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10), 
+              borderSide: BorderSide(color: Colors.purple, width: 1.0)),
           ),
         ),
 
