@@ -49,7 +49,7 @@ class RegisterMessageResponse {
 class ApiService {
   static const String baseUrl = 'http://localhost:8080';
 
-  static final Dio dio = Dio()..interceptors.add(AuthInterceptor());
+  static Dio dio = Dio()..interceptors.add(AuthInterceptor());
 
   final http.Client _client;
 

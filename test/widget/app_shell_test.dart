@@ -3,8 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/layout/app_shell.dart';
 import 'package:frontend/widgets/top_bar.dart';
+import 'package:dio/dio.dart';
+import 'package:mockito/annotations.dart';
 
+@GenerateMocks([Dio])
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   // Mock pages for testing
   final mockTitles = ['Decks', 'Cards', 'Create new Deck', 'Profile'];
   final mockPages = [

@@ -6,9 +6,11 @@ import 'package:frontend/pages/log_in_screen/log_in_screen.dart';
 import 'package:frontend/layout/app_shell.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('LandingPage Widget Tests', () {
     Widget createTestWidget() {
-      return const LandingPage();
+      return const MyLandingPage();
     }
 
     group('Initial UI Tests', () {

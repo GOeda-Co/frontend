@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/pages/deck_info/deck_info.dart';
+import 'package:dio/dio.dart';
+import 'package:mockito/annotations.dart';
 
+@GenerateMocks([Dio])
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('FlashcardPage Widget Tests', () {
     Widget createTestWidget() {
       return MaterialApp(

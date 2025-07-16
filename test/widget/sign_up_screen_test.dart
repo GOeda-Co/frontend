@@ -12,6 +12,8 @@ import 'package:mockito/annotations.dart';
 import 'sign_up_screen_test.mocks.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('SignUpScreen Widget Tests', () {
     late MockApiService mockApiService;
 

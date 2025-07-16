@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/pages/create_deck/create_deck.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('CreateDeckPage Widget Tests', () {
     Widget createTestWidget() {
       return MaterialApp(

@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/pages/log_in_screen/log_in_screen.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('LoginScreen Widget Tests', () {
     Widget createTestWidget() {
       return MaterialApp(

@@ -1,10 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../../lib/pages/decks/decks_page.dart';
-import '../../lib/pages/decks/recents/recents.dart';
-import '../../lib/pages/decks/stats/stats.dart';
+import 'package:frontend/pages/decks/decks_page.dart';
+import 'package:frontend/pages/decks/recents/recents.dart';
+import 'package:frontend/pages/decks/stats/stats.dart';
+import 'package:dio/dio.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:frontend/api/api.dart';
+import 'decks_page_test.mocks.dart';
 
+@GenerateMocks([Dio])
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets('DecksPage shows recents', (WidgetTester tester) async {
+    final mockDio = MockDio();
+    ApiService.dio = mockDio;
+    
+
+    when(mockDio.get(any)).thenAnswer((_) async => Response(
+      data: [
+        {'deck_id': '1', 'title': 'Deck 1', 'cards': 10},
+        {'deck_id': '2', 'title': 'Deck 2', 'cards': 5},
+      ],
+      statusCode: 200,
+      requestOptions: RequestOptions(path: ''),
+    ));
+
+    await tester.pumpWidget(MaterialApp(home: DecksPage()));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Deck 1'), findsOneWidget);
+    expect(find.text('Deck 2'), findsOneWidget);
+  });
+
   group('DecksPage Widget Tests', () {
     Widget createTestWidget() {
       return MaterialApp(
