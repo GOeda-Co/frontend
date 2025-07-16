@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/pages/decks/recents/recents.dart';
-import 'package:frontend/pages/decks/stats/stats.dart';
+import 'recents/recents.dart';
+import 'stats/stats.dart';
 
 class DecksPage extends StatelessWidget {
   const DecksPage({super.key});

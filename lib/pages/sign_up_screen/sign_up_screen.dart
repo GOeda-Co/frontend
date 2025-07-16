@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api.dart';
 import 'package:frontend/app.dart';
-import 'package:frontend/pages/decks/decks_page.dart';
 import 'package:frontend/pages/element_colors.dart';
 import 'package:frontend/pages/log_in_screen/log_in_screen.dart';
 

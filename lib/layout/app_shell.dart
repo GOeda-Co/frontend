@@ -6,7 +6,9 @@ import '../widgets/top_bar.dart';
 import '../pages/create_deck/create_deck.dart';
 
 class AppShell extends StatefulWidget {
-  const AppShell({super.key});
+  final List<String>? titles;
+  final List<Widget>? pages;
+  const AppShell({super.key, this.titles, this.pages});
 
   @override
   State<AppShell> createState() => _AppShellState();
@@ -15,8 +17,8 @@ class AppShell extends StatefulWidget {
 class _AppShellState extends State<AppShell> {
   int selectedIndex = 0;
 
-  final List<String> titles = ['Decks', 'Cards', 'Create new Deck', 'Profile'];
-  final List<Widget> pages = [const DecksPage(), const CardsPage(), CreateDeckPage(), const ProfileCenter()];
+  List<String> get titles => widget.titles ?? ['Decks', 'Cards', 'Create new Deck', 'Profile'];
+  List<Widget> get pages => widget.pages ?? [const DecksPage(), const CardsPage(), CreateDeckPage(), const ProfileCenter()];
 
   @override
   Widget build(BuildContext context) {
