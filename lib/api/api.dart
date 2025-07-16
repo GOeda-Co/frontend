@@ -346,10 +346,10 @@ class ApiService {
     }
   }
 
-  Future<bool> submitAnswers(List<Map<String, dynamic>> answers, String deckId) async {
+  Future<bool> submitAnswers(List<Map<String, dynamic>> answers) async {
     try {
       final response = await dio.post(
-        'http://localhost:8080/decks/$deckId/answers',
+        'http://localhost:8080/cards/answers',
         data: answers,
         options: Options(headers: {'Content-Type': 'application/json'}),
       );

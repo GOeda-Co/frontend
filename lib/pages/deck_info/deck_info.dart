@@ -64,7 +64,7 @@ class _FlashcardPageState extends State<FlashcardPage> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => LearningPage(cards: learningCards)),
+      MaterialPageRoute(builder: (_) => LearningPage(cards: learningCards, deckId: widget.deckId)),
     );
   }
 

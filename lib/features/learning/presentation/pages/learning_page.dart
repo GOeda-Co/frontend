@@ -6,8 +6,9 @@ import '../widgets/answer_buttons.dart';
 
 class LearningPage extends StatefulWidget {
   final List<LearningCard> cards;
+  final String deckId;
 
-  const LearningPage({super.key, required this.cards});
+  const LearningPage({super.key, required this.cards, required this.deckId});
 
   @override
   State<LearningPage> createState() => _LearningPageState();
@@ -23,9 +24,13 @@ class _LearningPageState extends State<LearningPage> {
     _controller = LearningController(widget.cards);
   }
 
-  void _handleRate(String rating) {
+  void _handleRate(String cardId, String rating, String deckId) {
     setState(() {
-      _controller.submitAnswer(rating);
+      _controller.submitAnswer(
+        cardId,
+        rating,
+        deckId
+      ); 
       _showBack = false;
     });
   }
@@ -87,13 +92,16 @@ class _LearningPageState extends State<LearningPage> {
                       child: _showBack
                           ? AnswerButtons(
                               key: const ValueKey('buttons'),
-                              onRate: _handleRate,
-                              onAgain: _handleAgain,
+                              onRate: (cardId, rating) =>
+                                  _handleRate(cardId, rating, widget.deckId),
+                              cardId: card.id,
                             )
                           : const SizedBox(
                               key: ValueKey('hint'),
                               height: 80,
-                              child: Center(child: Text('Tap the card to reveal answer')),
+                              child: Center(
+                                child: Text('Tap the card to reveal answer'),
+                              ),
                             ),
                     ),
                   ],
