@@ -7,7 +7,10 @@ class DecksPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
+      backgroundColor: colorScheme.surfaceContainerLowest,
       body: Padding(
         padding: const EdgeInsets.only(left: 25.0),
         child: Column(

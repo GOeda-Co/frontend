@@ -11,38 +11,37 @@ class CardsPage extends StatefulWidget {
 }
 
 class _CardsPageState extends State<CardsPage> {
-  final List<String> _cards = [];
-  final List<Map<String, String>> _cardsNew = [];
-
-  void loadCards() async {
-    final parsedJson = await ApiService.getAllCards();
-
-    if (parsedJson != null) {
-      setState(() {
-        _cards.clear();
-        _cards.addAll(
-          parsedJson
-              .map<String>((card) => '${card['word']} - ${card['translation']}')
-              .toList(),
-        );
-        _cardsNew.addAll(
-          parsedJson
-              .map<Map<String, String>>(
-                (card) => {
-                  'word': card['word'],
-                  'translation': card['translation'],
-                },
-              )
-              .toList(),
-        );
-      });
-    }
-  }
+  final List<Map<String, String>> _cards = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    loadCards();
+    _loadCards(); // Renamed for clarity
+  }
+
+  void _loadCards() async {
+    // Add null check for ApiService().getAllCards()
+    final List<dynamic>? parsedJson = await ApiService.getAllCards();
+
+    if (mounted) { // Check if the widget is still in the tree
+      setState(() {
+        _cards.clear(); // Clear existing cards before adding new ones
+        if (parsedJson != null) {
+          _cards.addAll(
+            parsedJson
+                .map<Map<String, String>>(
+                  (card) => {
+                    'word': card['word'] as String, // Ensure type safety
+                    'translation': card['translation'] as String, // Ensure type safety
+                  },
+                )
+                .toList(),
+          );
+        }
+        _isLoading = false; // Set loading to false once data is fetched
+      });
+    }
   }
 
   void _showCreationMenu() {
@@ -50,9 +49,9 @@ class _CardsPageState extends State<CardsPage> {
       context: context,
       builder: (context) => CardCreationMenu(
         onCreate: (term, definition) {
-          setState(() {
-            _cardsNew.add({'word': term, 'translation': definition});
-          });
+          // This callback is triggered when a new card is successfully created
+          // You should refresh the list of cards from the API to reflect the change
+          _loadCards();
         },
       ),
     );
@@ -60,7 +59,7 @@ class _CardsPageState extends State<CardsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
+    final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Scaffold(
       backgroundColor: colors.surface,
@@ -90,25 +89,41 @@ class _CardsPageState extends State<CardsPage> {
                 ),
               ],
             ),
+
             const SizedBox(height: 12),
+
             Expanded(
-              child: GridView.builder(
-                itemCount: _cardsNew.length,
-                padding: const EdgeInsets.only(top: 8),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  childAspectRatio: 0.9,
-                ),
-                itemBuilder: (context, index) {
-                  final card = _cardsNew[index];
-                  return CardItem(
-                    word: card['word']!,
-                    translation: card['translation']!,
-                  );
-                },
-              ),
+              child: _isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        color: colors.primary, // Theme loading indicator
+                      ),
+                    )
+                  : _cards.isEmpty
+                      ? Center(
+                          child: Text(
+                            'No cards added yet. Click the + button to add one!',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: colors.onSurfaceVariant), // Themed empty state text
+                          ),
+                        )
+                      : GridView.builder(
+                          itemCount: _cards.length,
+                          padding: const EdgeInsets.only(top: 8),
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
+                            childAspectRatio: 0.9,
+                          ),
+                          itemBuilder: (context, index) {
+                            final card = _cards[index];
+                            return CardItem(
+                              word: card['word']!,
+                              translation: card['translation']!,
+                            );
+                          },
+                        ),
             ),
           ],
         ),

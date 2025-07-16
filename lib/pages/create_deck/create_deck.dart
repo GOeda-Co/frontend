@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api.dart';
-import 'package:frontend/app.dart';
 import 'package:frontend/pages/element_colors.dart';
+import 'package:frontend/widgets/flashcards.dart';
+import 'package:frontend/layout/app_shell.dart';
 
 class CreateDeckPage extends StatelessWidget {
   const CreateDeckPage({super.key});
@@ -19,18 +20,6 @@ class CreateDeckPage extends StatelessWidget {
       ),
     );
   }
-}
-
-class Flashcard {
-  final String id;
-  final TextEditingController wordController;
-  final TextEditingController translationController;
-
-  Flashcard({
-    required this.id,
-    required this.wordController,
-    required this.translationController,
-  });
 }
 
 class _DeckForm extends StatefulWidget {
@@ -58,7 +47,7 @@ class _DeckFormState extends State<_DeckForm> {
     required String name,
     required String description,
     required List<Map<String, String>>
-    cards, // List of {'word': ..., 'translation': ...}
+    cards,
   }) async {
     // STEP 0: Create deck and get deck_id
     final response = await ApiService.dio.post(
@@ -175,20 +164,21 @@ class _DeckFormState extends State<_DeckForm> {
 
     if (!mounted) return;
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Deck and cards submitted')));
-
-    if (Navigator.canPop(context)) {
-      Navigator.pop(context);
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const AnkiApp(),
-        ), // or your home screen
-      );
-    }
+    // Navigate back after a short delay to let user see the success message
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AppShell(),
+            ),
+          );
+        }
+      }
+    });
   }
 
   @override
@@ -197,6 +187,7 @@ class _DeckFormState extends State<_DeckForm> {
       padding: const EdgeInsets.all(16),
       children: [
         const SizedBox(height: 16),
+
         TextField(
           controller: _deckNameController,
           decoration: InputDecoration(
@@ -212,14 +203,16 @@ class _DeckFormState extends State<_DeckForm> {
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           ),
         ),
+
         const SizedBox(height: 16),
+
         ...List.generate(_flashcards.length, (index) {
           final card = _flashcards[index];
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 border: Border.all(color: Colors.purple),
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -298,12 +291,12 @@ class _DeckFormState extends State<_DeckForm> {
         Center(
           child: ElevatedButton(
             onPressed: _submitDeck,
-            child: const Text('Create Deck'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.green,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
             ),
+            child: const Text('Create Deck'),
           ),
         ),
       ],

@@ -4,11 +4,14 @@ import '../pages/decks/decks_page.dart';
 import '../pages/cards/presentation/pages/cards_page.dart';
 import '../widgets/top_bar.dart';
 import '../pages/create_deck/create_deck.dart';
+import '../pages/settings_pages/settings_page.dart';
 
 class AppShell extends StatefulWidget {
   final List<String>? titles;
   final List<Widget>? pages;
-  const AppShell({super.key, this.titles, this.pages});
+  final Widget Function()? settingsPageBuilder;
+
+  const AppShell({super.key, this.titles, this.pages, this.settingsPageBuilder});
 
   @override
   State<AppShell> createState() => _AppShellState();
@@ -17,8 +20,14 @@ class AppShell extends StatefulWidget {
 class _AppShellState extends State<AppShell> {
   int selectedIndex = 0;
 
-  List<String> get titles => widget.titles ?? ['Decks', 'Cards', 'Create new Deck', 'Profile'];
-  List<Widget> get pages => widget.pages ?? [const DecksPage(), const CardsPage(), CreateDeckPage(), const ProfileCenter()];
+  List<String> get titles => widget.titles ?? ['Decks', 'Cards', 'Create new Deck', 'Profile', 'Settings'];
+  List<Widget> get pages => widget.pages ?? [
+    const DecksPage(),
+    const CardsPage(),
+    CreateDeckPage(),
+    const ProfilePage(), // Use ProfilePage instead of ProfileCenter
+    widget.settingsPageBuilder != null ? widget.settingsPageBuilder!() : const SettingsPage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +58,6 @@ class _AppShellState extends State<AppShell> {
                   icon: Icon(Icons.add),
                   onPressed: () {
                     setState(() => selectedIndex = 2);
-
                   },
                   tooltip: 'Add',
                 ),
@@ -64,13 +72,27 @@ class _AppShellState extends State<AppShell> {
                     backgroundColor: selectedIndex == 3
                         ? colors.primary
                         : colors.surfaceContainerHighest,
-                    child: Icon(
-                      Icons.person,
-                      size: 18,
-                      color: selectedIndex == 3
-                          ? colors.onPrimary
-                          : colors.onSurface,
+                    child: Tooltip(
+                      message: 'Profile',
+                      child: Icon(
+                        Icons.person,
+                        size: 18,
+                        color: selectedIndex == 3
+                            ? colors.onPrimary
+                            : colors.onSurface,
+                      ),
                     ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Tooltip(
+                  message: 'Settings',
+                  preferBelow: true,
+                  child: IconButton(
+                    icon: Icon(Icons.settings),
+                    onPressed: () {
+                      setState(() => selectedIndex = 4);
+                    },
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -104,13 +126,14 @@ class _AppShellState extends State<AppShell> {
       ),
     );
   }
-  Widget _buildNavItem(int index, IconData icon, String tooltip) {
-  final isSelected = selectedIndex == index;
 
-  return IconButton(
-    icon: Icon(icon, color: isSelected ? Colors.purple : Colors.pink[150]),
-    tooltip: tooltip,
-    onPressed: () => setState(() => selectedIndex = index),
-  );
-}
+  Widget _buildNavItem(int index, IconData icon, String tooltip) {
+    final isSelected = selectedIndex == index;
+
+    return IconButton(
+      icon: Icon(icon, color: isSelected ? Colors.purple : Colors.pink[150]),
+      tooltip: tooltip,
+      onPressed: () => setState(() => selectedIndex = index),
+    );
+  }
 }

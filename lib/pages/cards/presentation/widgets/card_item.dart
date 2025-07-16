@@ -25,14 +25,13 @@ class _CardItemState extends State<CardItem> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
+    final ColorScheme colors = Theme.of(context).colorScheme;
 
     return GestureDetector(
       onTap: _toggleSide,
-      
       child: Container(
         decoration: BoxDecoration(
-          color: colors.primaryContainer,
+          color: colors.surfaceContainer,
           borderRadius: BorderRadius.circular(12),
         ),
         padding: const EdgeInsets.all(12),
@@ -43,7 +42,7 @@ class _CardItemState extends State<CardItem> {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: colors.onPrimaryContainer,
+            color: colors.onSurface,
           ),
         ),
       ),

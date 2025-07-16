@@ -30,6 +30,8 @@ class _RecentsSectionState extends State<RecentsSection> {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -37,13 +39,18 @@ class _RecentsSectionState extends State<RecentsSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Recents',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 20, 
+            fontWeight: FontWeight.bold,
+            color: colorScheme.onSurface,
+            ),
         ),
         const SizedBox(height: 4),
-        SizedBox(
+        Container(
           height: 240,
+          color: colorScheme.surfaceContainer,
           child: GridView.builder(
             itemCount: recents.length,
             scrollDirection: Axis.vertical,
