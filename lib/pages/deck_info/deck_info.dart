@@ -3,6 +3,7 @@ import 'package:frontend/api/api.dart';
 import 'package:frontend/app.dart';
 import 'package:frontend/features/learning/domain/entities/learning_card.dart';
 import 'package:frontend/features/learning/presentation/pages/learning_page.dart';
+import 'package:frontend/pages/decks/decks_page.dart';
 
 class FlashcardPage extends StatefulWidget {
   final String deckId;
@@ -146,7 +147,16 @@ class _FlashcardPageState extends State<FlashcardPage> {
         iconTheme: IconThemeData(color: colorScheme.onSurface),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AnkiApp())),
+          onPressed: () => 
+          Navigator.pushReplacementNamed(
+                      context, 
+                      '/app-shell',
+                    )
+          // Navigator.push(
+          //   context,
+            //  MaterialPageRoute(builder: (_) => MyApp())
+            
+            //  ),
         ),
         actions: [
           TextButton.icon(
