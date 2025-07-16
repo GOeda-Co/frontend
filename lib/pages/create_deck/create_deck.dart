@@ -60,45 +60,99 @@ class _DeckFormState extends State<_DeckForm> {
     required List<Map<String, String>>
     cards, // List of {'word': ..., 'translation': ...}
   }) async {
-    // STEP 0: Create deck and get deck_id
-    final response = await ApiService.dio.post(
-      'http://localhost:8080/decks',
-      data: {'name': name, 'description': description},
-      options: Options(headers: {'Content-Type': 'application/json'}),
-    );
-
-    if (response.statusCode != 200 && response.statusCode != 201) {
-      print('Failed to create deck. Status: ${response.statusCode}');
-      return;
-    }
-
-    final Map<String, dynamic> deckData = response.data;
-    final String deckId = deckData['deck_id'];
-    print('Created deck with ID: $deckId');
-
-    // STEP 1: Add each card and get card_id
-    for (final card in cards) {
-      final cardId = await ApiService().addCardString(
-        word: card['word'] ?? '',
-        translation: card['translation'] ?? '',
+    try {
+      // STEP 0: Create deck and get deck_id
+      final response = await ApiService.dio.post(
+        'http://localhost:8080/decks',
+        data: {'name': name, 'description': description},
+        options: Options(headers: {'Content-Type': 'application/json'}),
       );
-      // String? cardId = result?['card_id']?.toString();
 
-      if (cardId == null) {
-        print('Skipping card: failed to add ${card['word']}');
-        continue;
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to create deck. Status: ${response.statusCode}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
       }
 
-      // STEP 2: Link card to deck
-      final addToDeckSuccess = await ApiService().addCardToDeck(
-        deckId: deckId,
-        cardId: cardId,
-      );
+      final Map<String, dynamic> deckData = response.data;
+      final String deckId = deckData['deck_id'];
+      print('Created deck with ID: $deckId');
 
-      if (addToDeckSuccess) {
-        print('Card $cardId added to deck $deckId');
-      } else {
-        print('Failed to add card $cardId to deck $deckId');
+      // STEP 1: Add each card and get card_id
+      int successCount = 0;
+      for (final card in cards) {
+        try {
+          final cardId = await ApiService().addCardString(
+            word: card['word'] ?? '',
+            translation: card['translation'] ?? '',
+          );
+
+          if (cardId == null) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Failed to add card: ${card['word']}'),
+                  backgroundColor: Colors.orange,
+                ),
+              );
+            }
+            continue;
+          }
+
+          // STEP 2: Link card to deck
+          final addToDeckSuccess = await ApiService().addCardToDeck(
+            deckId: deckId,
+            cardId: cardId,
+          );
+
+          if (addToDeckSuccess) {
+            successCount++;
+            print('Card $cardId added to deck $deckId');
+          } else {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Failed to add card ${card['word']} to deck'),
+                  backgroundColor: Colors.orange,
+                ),
+              );
+            }
+          }
+        } catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Error adding card ${card['word']}: ${e.toString()}'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }
+      }
+
+      // Show success message with count
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Deck created successfully! Added $successCount out of ${cards.length} cards.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Network error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }
@@ -175,20 +229,21 @@ class _DeckFormState extends State<_DeckForm> {
 
     if (!mounted) return;
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Deck and cards submitted')));
-
-    if (Navigator.canPop(context)) {
-      Navigator.pop(context);
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const AnkiApp(),
-        ), // or your home screen
-      );
-    }
+    // Navigate back after a short delay to let user see the success message
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const AnkiApp(),
+            ),
+          );
+        }
+      }
+    });
   }
 
   @override

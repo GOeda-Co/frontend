@@ -51,8 +51,6 @@ class _MyLandingPageState extends State<MyLandingPage> {
   @override
   void initState() {
     super.initState();
-    // Using a smaller viewportFraction to show more of the previous/next image if needed
-    // You might want to adjust this based on the actual image size and desired peek.
     _pageController = PageController(viewportFraction: 0.75, initialPage: _currentPage);
 
     _pageController.addListener(() {
