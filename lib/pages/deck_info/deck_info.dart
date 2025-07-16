@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api.dart';
+import 'package:frontend/app.dart';
 import 'package:frontend/features/learning/domain/entities/learning_card.dart';
 import 'package:frontend/features/learning/presentation/pages/learning_page.dart';
 
@@ -66,7 +67,10 @@ class _FlashcardPageState extends State<FlashcardPage> {
 
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => LearningPage(cards: learningCards, deckId: widget.deckId)),
+      MaterialPageRoute(
+        builder: (_) =>
+            LearningPage(cards: learningCards, deckId: widget.deckId),
+      ),
     );
   }
 
@@ -140,6 +144,10 @@ class _FlashcardPageState extends State<FlashcardPage> {
                     style: TextStyle(color: colorScheme.onSurface)
                 ),
         iconTheme: IconThemeData(color: colorScheme.onSurface),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AnkiApp())),
+        ),
         actions: [
           TextButton.icon(
             onPressed: cards.isNotEmpty ? onStudyPressed : null,

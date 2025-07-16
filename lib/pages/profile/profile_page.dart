@@ -84,13 +84,14 @@ class _ProfilePageState extends State<ProfilePage> {
                       CircleAvatar(
                         radius: 140,
                         backgroundColor: colorScheme.surfaceContainerHigh,
-                        backgroundImage: NetworkImage(
-                          'https://avatars.githubusercontent.com/u/57171345?v=4',
-                        ),
-                        onBackgroundImageError: (exception, stackTrace) {
-                          // Fallback or error handling for image loading
-                          print('Error loading avatar image: $exception');
-                        },
+                        child: Text(
+                          name?[0].toUpperCase() ?? "U",
+                          style: const TextStyle(
+                            fontSize: 96,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
                       ),
                       const SizedBox(width: 30),
                       Expanded(

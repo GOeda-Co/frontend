@@ -115,11 +115,6 @@ class _MyLandingPageState extends State<MyLandingPage> {
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
-                //TODO: Remove this button
-                ElevatedButton(onPressed: () {
-                  // Make sure your '/app-shell' route is defined in main.dart
-                  Navigator.pushNamed(context, '/app-shell');
-                }, child: const Text('TEMP:App Shell'))
               ],
             ),
           )
