@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api.dart';
 import 'package:frontend/app.dart';
-import 'package:frontend/pages/element_colors.dart';
+// import 'package:frontend/pages/element_colors.dart'; // Consider removing this import if no longer needed
 import 'package:frontend/pages/log_in_screen/log_in_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -15,12 +15,9 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   bool _isObscure = true; // Password visibility
-  final TextEditingController _nameTextController =
-      TextEditingController(); // Text deletion
-  final TextEditingController _emailTextController =
-      TextEditingController(); // Text deletion
-  final TextEditingController _passwordTextController =
-      TextEditingController(); // Text deletion
+  final TextEditingController _nameTextController = TextEditingController(); // Text deletion
+  final TextEditingController _emailTextController = TextEditingController(); // Text deletion
+  final TextEditingController _passwordTextController = TextEditingController(); // Text deletion
 
   @override
   void dispose() {
@@ -32,8 +29,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.white),
+      backgroundColor: colorScheme.surface, // Use theme's background color (surface or surfaceContainerLowest also options)
+      appBar: AppBar(
+        backgroundColor: colorScheme.surface, // Use theme's surface color for AppBar
+        iconTheme: IconThemeData(color: colorScheme.onSurface), // Color for leading icons like back button
+      ),
       body: Center(
         // Center the entire box horizontally and vertically
         child: Container(
@@ -41,37 +44,47 @@ class _SignUpScreenState extends State<SignUpScreen> {
           height: 420, // Specify the desired height of your box
           padding: const EdgeInsets.all(20.0), // Add padding inside the box
           decoration: BoxDecoration(
-            color: ElementColors.backgroundColor, // Background color of the box
+            color: colorScheme.primaryContainer, // Background color of the box from theme
             borderRadius: BorderRadius.circular(
-              ElementColors.borderRadius,
+              15.0, // Using a fixed value, or define in your theme
             ), // Rounded corners
           ),
           child: Column(
-            // Center the text within the box
             children: [
               Text(
                 'Welcome to Repeatro!',
-                textAlign:
-                    TextAlign.center, // Center the text itself if it wraps
+                textAlign: TextAlign.center, // Center the text itself if it wraps
                 style: TextStyle(
                   fontSize: 24,
-                  color: ElementColors.textColor, // Text color
+                  color: colorScheme.onSurface, // Text color on the surface
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextField(
                 controller: _nameTextController,
+                style: TextStyle(color: colorScheme.onSurface), // Input text color
                 decoration: InputDecoration(
                   hintText: 'Name',
                   hintStyle: TextStyle(
                     fontSize: 14,
-                    color: ElementColors.hintTextColor,
+                    color: colorScheme.onSurfaceVariant, // Hint text color
                   ),
+                  fillColor: colorScheme.surfaceVariant, // Text field background color
+                  filled: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: colorScheme.outline), // Border color
+                  ),
+                  enabledBorder: OutlineInputBorder( // Ensure border color applies when enabled
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: colorScheme.outlineVariant),
+                  ),
+                  focusedBorder: OutlineInputBorder( // Border color when focused
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: colorScheme.primary, width: 2.0),
                   ),
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.delete, size: 20),
+                    icon: Icon(Icons.delete, size: 20, color: colorScheme.onSurfaceVariant), // Icon color
                     onPressed: () {
                       _nameTextController.clear();
                       FocusScope.of(context).requestFocus();
@@ -79,20 +92,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextField(
                 controller: _emailTextController,
+                style: TextStyle(color: colorScheme.onSurface), // Input text color
                 decoration: InputDecoration(
                   hintText: 'Email',
                   hintStyle: TextStyle(
                     fontSize: 14,
-                    color: ElementColors.hintTextColor,
+                    color: colorScheme.onSurfaceVariant, // Hint text color
                   ),
+                  fillColor: colorScheme.surfaceVariant, // Text field background color
+                  filled: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: colorScheme.outline),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: colorScheme.outlineVariant),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: colorScheme.primary, width: 2.0),
                   ),
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.delete, size: 20),
+                    icon: Icon(Icons.delete, size: 20, color: colorScheme.onSurfaceVariant), // Icon color
                     onPressed: () {
                       _emailTextController.clear();
                       FocusScope.of(context).requestFocus();
@@ -100,18 +125,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextField(
                 controller: _passwordTextController,
                 obscureText: _isObscure,
+                style: TextStyle(color: colorScheme.onSurface), // Input text color
                 decoration: InputDecoration(
                   hintText: 'Password',
                   hintStyle: TextStyle(
                     fontSize: 14,
-                    color: ElementColors.hintTextColor,
+                    color: colorScheme.onSurfaceVariant, // Hint text color
                   ),
+                  fillColor: colorScheme.surfaceVariant, // Text field background color
+                  filled: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: colorScheme.outline),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: colorScheme.outlineVariant),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: colorScheme.primary, width: 2.0),
                   ),
                   suffixIcon: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -120,8 +157,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         icon: Icon(
                           _isObscure ? Icons.visibility : Icons.visibility_off,
                           size: 20,
+                          color: colorScheme.onSurfaceVariant, // Icon color
                         ),
-
                         onPressed: () {
                           setState(() {
                             _isObscure = !_isObscure;
@@ -129,7 +166,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         },
                       ),
                       IconButton(
-                        icon: const Icon(Icons.delete, size: 20),
+                        icon: Icon(Icons.delete, size: 20, color: colorScheme.onSurfaceVariant), // Icon color
                         onPressed: () {
                           _passwordTextController.clear();
                           FocusScope.of(context).requestFocus();
@@ -139,18 +176,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: ElementColors.buttonColor, //Button color
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 35, vertical: 17),
+                  backgroundColor: colorScheme.primary, // Button background color from theme
+                  foregroundColor: colorScheme.onPrimary, // Button text/icon color from theme
+                  padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 17),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),
                 ),
-                child: Text('Sign Up', style: TextStyle(fontSize: 17)),
-                onPressed: () async {
+                child: const Text('Sign Up', style: TextStyle(fontSize: 17)),
+                onPressed: () async { // Make onPressed async to await API call
                   final email = _emailTextController.text.trim();
                   final password = _passwordTextController.text;
                   final name = _nameTextController.text.trim();
@@ -163,20 +200,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
                     errorMessage = 'Enter a valid email address.';
                   } else if (password.length < 6) {
-                    errorMessage =
-                        'Password must be at least 6 characters long.';
+                    errorMessage = 'Password must be at least 6 characters long.';
                   }
 
                   if (errorMessage != null) {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: Text('Invalid Input'),
-                        content: Text(errorMessage!),
+                        title: Text('Invalid Input', style: TextStyle(color: colorScheme.onSurface)),
+                        content: Text(errorMessage!, style: TextStyle(color: colorScheme.onSurfaceVariant)), // Use ! as checked by if
+                        backgroundColor: colorScheme.surfaceContainerHigh, // Dialog background color
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: Text('OK'),
+                            child: Text('OK', style: TextStyle(color: colorScheme.primary)), // Theme button color
                           ),
                         ],
                       ),
@@ -185,13 +222,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   }
 
                   try {
-                    final responseString = ApiService().register(
+                    // Await the API call
+                    final responseString = await ApiService().register(
                       email,
                       password,
                       name,
                     );
 
-                    final json = jsonDecode(responseString.toString());
+                    // Ensure responseString is not null before decoding
+                    if (responseString == null || responseString.isEmpty) {
+                      throw Exception("Server returned no response or empty response.");
+                    }
+
+                    final json = jsonDecode(responseString);
                     final userId = json['user_id'];
                     final message = json['message'];
 
@@ -200,57 +243,70 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                     if (userId != null) {
                       // Navigate or show success
+                      if (mounted) { // Check mounted before showDialog
+                        showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: Text('Success', style: TextStyle(color: colorScheme.onSurface)),
+                            content: Text(message ?? 'Account created.', style: TextStyle(color: colorScheme.onSurfaceVariant)),
+                            backgroundColor: colorScheme.surfaceContainerHigh,
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context); // Dismiss dialog
+                                  // Use pushReplacementNamed to go to login and remove signup from stack
+                                  Navigator.pushReplacementNamed(context, '/login');
+                                },
+                                child: Text('Continue', style: TextStyle(color: colorScheme.primary)),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    } else {
+                      // If userId is null, it's an error from the API
+                      throw Exception(message ?? "Unknown registration error.");
+                    }
+                  } catch (e) {
+                    if (mounted) { // Check mounted before showDialog
                       showDialog(
                         context: context,
                         builder: (_) => AlertDialog(
-                          title: Text('Success'),
-                          content: Text(message ?? 'Account created.'),
+                          title: Text('Error', style: TextStyle(color: colorScheme.error)), // Use error color for title
+                          content: Text(e.toString(), style: TextStyle(color: colorScheme.onSurfaceVariant)),
+                          backgroundColor: colorScheme.surfaceContainerHigh,
                           actions: [
                             TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => LoginScreen()),
-                                );
-                              },
-                              child: Text('Continue'),
+                              onPressed: () => Navigator.pop(context),
+                              child: Text('OK', style: TextStyle(color: colorScheme.primary)),
                             ),
                           ],
                         ),
                       );
-                    } else {
-                      throw Exception(message ?? "Unknown registration error.");
                     }
-                  } catch (e) {
-                    showDialog(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        title: Text('Error'),
-                        content: Text(e.toString()),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text('OK'),
-                          ),
-                        ],
-                      ),
-                    );
                   }
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
-                  );
+                  // Removed the redundant Navigator.push here, as it's handled in success dialog
                 },
               ),
-              SizedBox(height: 20),
-              Text('Already have an account?', style: TextStyle(fontSize: 15)),
+              const SizedBox(height: 20),
+              Text(
+                'Already have an account?',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: colorScheme.onBackground, // Text color
+                ),
+              ),
               TextButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/login');
                 },
-                child: Text('Login', style: TextStyle(fontSize: 15)),
+                child: Text(
+                  'Login',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: colorScheme.primary, // Link text color from theme
+                  ),
+                ),
               ),
             ],
           ),

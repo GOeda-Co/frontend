@@ -33,18 +33,26 @@ class _StatsSectionState extends State<StatsSection> {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(
+        child: CircularProgressIndicator(color: colorScheme.primary),
+        );
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Statistics',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 24, // Increased font size for section title
+            fontWeight: FontWeight.bold,
+            color: colorScheme.onSurface, // Use theme's color for section title
+          ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

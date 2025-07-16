@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:frontend/api/api.dart';
 import 'package:frontend/app.dart';
-import 'package:frontend/pages/element_colors.dart';
+// import 'package:frontend/pages/element_colors.dart'; // Remove or comment this out if not needed
 import 'package:frontend/sso/storage.dart';
+import 'package:frontend/layout/app_shell.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,10 +16,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _isObscure = true; // Password visibility
-  final TextEditingController _emailTextController =
-      TextEditingController(); // Text deletion
-  final TextEditingController _passwordTextController =
-      TextEditingController(); // Text deletion
+  final TextEditingController _emailTextController = TextEditingController(); // Text deletion
+  final TextEditingController _passwordTextController = TextEditingController(); // Text deletion
 
   @override
   void dispose() {
@@ -29,8 +28,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Access the current theme's color scheme
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.white),
+      backgroundColor: colorScheme.background, // Use theme's background color for the Scaffold
+      appBar: AppBar(
+        backgroundColor: colorScheme.surface, // Use theme's surface color for AppBar
+        iconTheme: IconThemeData(color: colorScheme.onSurface), // Color for leading icons like back button
+      ),
       body: Center(
         // Center the entire box horizontally and vertically
         child: Container(
@@ -38,9 +44,9 @@ class _LoginScreenState extends State<LoginScreen> {
           height: 370, // Specify the desired height of your box
           padding: const EdgeInsets.all(20.0), // Add padding inside the box
           decoration: BoxDecoration(
-            color: ElementColors.backgroundColor, // Background color of the box
+            color: colorScheme.surface, // Background color of the box from theme
             borderRadius: BorderRadius.circular(
-              ElementColors.borderRadius,
+              15.0, // Using a fixed value, or define in your theme
             ), // Rounded corners
           ),
           child: Column(
@@ -48,31 +54,45 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Text(
                 'Welcome to Repeatro!',
-                textAlign:
-                    TextAlign.center, // Center the text itself if it wraps
+                textAlign: TextAlign.center, // Center the text itself if it wraps
                 style: TextStyle(
                   fontSize: 24,
-                  color: ElementColors.textColor, // Text color
+                  color: colorScheme.onSurface, // Text color on the surface
                 ),
               ),
               Text(
-                'Sign in to continue',
-                style: TextStyle(fontSize: 15, color: Colors.grey),
+                'Log in to continue',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: colorScheme.onSurfaceVariant, // Use a softer text color from theme
+                ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextField(
                 controller: _emailTextController,
+                style: TextStyle(color: colorScheme.onSurface), // Input text color
                 decoration: InputDecoration(
                   hintText: 'Email',
                   hintStyle: TextStyle(
                     fontSize: 14,
-                    color: ElementColors.hintTextColor,
+                    color: colorScheme.onSurfaceVariant, // Hint text color
                   ),
+                  fillColor: colorScheme.surfaceVariant, // Text field background color
+                  filled: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: colorScheme.outline), // Border color
+                  ),
+                  enabledBorder: OutlineInputBorder( // Ensure border color applies when enabled
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: colorScheme.outlineVariant),
+                  ),
+                  focusedBorder: OutlineInputBorder( // Border color when focused
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: colorScheme.primary, width: 2.0),
                   ),
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.delete, size: 20),
+                    icon: Icon(Icons.delete, size: 20, color: colorScheme.onSurfaceVariant), // Icon color
                     onPressed: () {
                       _emailTextController.clear();
                       FocusScope.of(context).requestFocus();
@@ -80,18 +100,30 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextField(
                 controller: _passwordTextController,
                 obscureText: _isObscure,
+                style: TextStyle(color: colorScheme.onSurface), // Input text color
                 decoration: InputDecoration(
                   hintText: 'Password',
                   hintStyle: TextStyle(
                     fontSize: 14,
-                    color: ElementColors.hintTextColor,
+                    color: colorScheme.onSurfaceVariant, // Hint text color
                   ),
+                  fillColor: colorScheme.surfaceVariant, // Text field background color
+                  filled: true,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: colorScheme.outline),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: colorScheme.outlineVariant),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: colorScheme.primary, width: 2.0),
                   ),
                   suffixIcon: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -100,8 +132,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         icon: Icon(
                           _isObscure ? Icons.visibility : Icons.visibility_off,
                           size: 20,
+                          color: colorScheme.onSurfaceVariant, // Icon color
                         ),
-
                         onPressed: () {
                           setState(() {
                             _isObscure = !_isObscure;
@@ -109,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       ),
                       IconButton(
-                        icon: const Icon(Icons.delete, size: 20),
+                        icon: Icon(Icons.delete, size: 20, color: colorScheme.onSurfaceVariant), // Icon color
                         onPressed: () {
                           _passwordTextController.clear();
                           FocusScope.of(context).requestFocus();
@@ -119,17 +151,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: ElementColors.buttonColor, //Button color
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 35, vertical: 17),
+                  backgroundColor: colorScheme.primary, // Button background color from theme
+                  foregroundColor: colorScheme.onPrimary, // Button text/icon color from theme
+                  padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 17),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0),
                   ),
                 ),
-                child: Text('Log in', style: TextStyle(fontSize: 17)),
+                child: const Text('Log in', style: TextStyle(fontSize: 17)),
                 onPressed: () async {
                   final email = _emailTextController.text.trim();
                   final password = _passwordTextController.text;
@@ -140,20 +172,20 @@ class _LoginScreenState extends State<LoginScreen> {
                       !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
                     errorMessage = 'Enter a valid email address.';
                   } else if (password.length < 6) {
-                    errorMessage =
-                        'Password must be at least 6 characters long.';
+                    errorMessage = 'Password must be at least 6 characters long.';
                   }
 
                   if (errorMessage != null) {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: Text('Invalid Input'),
-                        content: Text("errorMessage"),
+                        title: Text('Invalid Input', style: TextStyle(color: colorScheme.onSurface)), // Theme text color
+                        content: Text(errorMessage!, style: TextStyle(color: colorScheme.onSurfaceVariant)), // Theme text color
+                        backgroundColor: colorScheme.surfaceContainerHigh, // Dialog background color
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: Text('OK'),
+                            child: Text('OK', style: TextStyle(color: colorScheme.primary)), // Theme button color
                           ),
                         ],
                       ),
@@ -179,24 +211,24 @@ class _LoginScreenState extends State<LoginScreen> {
                       throw Exception("Wrong email or password");
                     }
 
-                      
                     await TokenStorage.saveToken(token);
 
                     // If login is successful, navigate:
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => AnkiApp()),
+                    Navigator.pushReplacementNamed(
+                      context, 
+                      '/app-shell',
                     );
                   } catch (e) {
                     showDialog(
                       context: context,
                       builder: (_) => AlertDialog(
-                        title: Text('Login Failed'),
-                        content: Text(e.toString()),
+                        title: Text('Login Failed', style: TextStyle(color: colorScheme.onSurface)), // Theme text color
+                        content: Text(e.toString(), style: TextStyle(color: colorScheme.onSurfaceVariant)), // Theme text color
+                        backgroundColor: colorScheme.surfaceContainerHigh, // Dialog background color
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: Text('OK'),
+                            child: Text('OK', style: TextStyle(color: colorScheme.primary)), // Theme button color
                           ),
                         ],
                       ),
@@ -204,13 +236,25 @@ class _LoginScreenState extends State<LoginScreen> {
                   }
                 },
               ),
-              SizedBox(height: 20),
-              Text('Don\'t have an account?', style: TextStyle(fontSize: 15)),
+              const SizedBox(height: 20),
+              Text(
+                'Don\'t have an account?',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: colorScheme.onBackground, // Text color
+                ),
+              ),
               TextButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, '/signup');
                 },
-                child: Text('Sign up', style: TextStyle(fontSize: 15)),
+                child: Text(
+                  'Sign up',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: colorScheme.primary, // Link text color from theme
+                  ),
+                ),
               ),
             ],
           ),
@@ -219,8 +263,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
-
-
-// core/network/auth_interceptor.dar
-

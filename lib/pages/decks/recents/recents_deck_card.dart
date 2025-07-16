@@ -14,27 +14,48 @@ class RecentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Row(
       children: [
         InkWell(
           onTap: onIconTap,
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColorLight,
+          child: Card(
+            color: colorScheme.secondaryContainer, // Use a themed container color
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(Icons.view_agenda, size: 24),
+            margin: EdgeInsets.zero, // Remove default Card margin
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Icon(
+                Icons.view_agenda,
+                size: 24,
+                color: colorScheme.onSecondaryContainer, // Icon color on the container
+              ),
+            ),
           ),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: 10),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-              Text('$cardCount cards', style: const TextStyle(fontSize: 12)),
+              Text(
+                title, 
+                style: TextStyle(
+                  fontWeight: FontWeight.bold, 
+                  color: colorScheme.onSurface
+                  )
+              ),
+              Text(
+                '$cardCount cards', 
+                style: TextStyle(
+                  fontSize: 12, 
+                  color: colorScheme.onSurface.withAlpha((0.7 * 255).toInt())
+                )
+              ),
             ],
           ),
         ),
