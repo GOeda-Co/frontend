@@ -30,7 +30,6 @@ class _ProfileCenterState extends State<ProfileCenter> {
 
     final decoded = JwtDecoder.decode(token);
     print('🔓 Decoded token: $decoded');
-    
 
     setState(() {
       userId = decoded['id']?.toString() ?? decoded['sub']?.toString();
@@ -62,8 +61,13 @@ class _ProfileCenterState extends State<ProfileCenter> {
                       CircleAvatar(
                         radius: 140,
                         backgroundColor: Colors.grey.shade300,
-                        backgroundImage: NetworkImage(
-                          'https://avatars.githubusercontent.com/u/57171345?v=4',
+                        child: Text(
+                          name?[0].toUpperCase() ?? "U",
+                          style: const TextStyle(
+                            fontSize: 96,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       SizedBox(width: 30),
