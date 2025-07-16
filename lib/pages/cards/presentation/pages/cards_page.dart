@@ -51,7 +51,7 @@ class _CardsPageState extends State<CardsPage> {
       builder: (context) => CardCreationMenu(
         onCreate: (term, definition) {
           setState(() {
-            _cards.add(term);
+            _cardsNew.add({'word': term, 'translation': definition});
           });
         },
       ),

@@ -24,28 +24,6 @@ class _AppShellState extends State<AppShell> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    final createButton = TextButton(
-      style: TextButton.styleFrom(
-        backgroundColor: colors.primary,
-        foregroundColor: colors.onPrimary,
-        minimumSize: const Size(100, 50),
-      ),
-      onPressed: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Create Deck button pressed!')),
-        );
-        setState(() {
-          selectedIndex = 0;
-        });
-      },
-      child: Text(
-        'Create',
-        style: TextStyle(
-          fontSize: 20,
-          ),
-      ),
-    );
-
     return Scaffold(
       backgroundColor: colors.surfaceContainerLowest,
       body: Row(
@@ -113,10 +91,7 @@ class _AppShellState extends State<AppShell> {
                 child: Column(
                   children: [
                     TopBar(
-                      title: titles[selectedIndex],
-                      actions: selectedIndex == 2 // If it's the "Create new Deck" page (index 2)
-                          ? [createButton]        // Provide the 'Create' button
-                          : [],                   // Otherwise, provide an empty list (no actions)
+                      title: titles[selectedIndex],                   // Otherwise, provide an empty list (no actions)
                     ),
                     const Divider(height: 1),
                     Expanded(child: pages[selectedIndex]),
