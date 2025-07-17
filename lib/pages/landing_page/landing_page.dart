@@ -10,9 +10,11 @@ class MyLandingPage extends StatefulWidget {
 
 class _MyLandingPageState extends State<MyLandingPage> {
   final List<String> _screenshtPaths = [
-    'lib/screenshots/scrn1.png',
-    'lib/screenshots/scrn2.png',
-    'lib/screenshots/scrn3.png',
+    'lib/screenshots/decks.jpg',
+    'lib/screenshots/cards.jpg',
+    'lib/screenshots/add_card.jpg',
+    'lib/screenshots/overview_cards.jpg',
+    'lib/screenshots/study_cards.jpg',
   ];
 
   late PageController _pageController;
@@ -181,7 +183,7 @@ class _MyLandingPageState extends State<MyLandingPage> {
                 crossAxisAlignment: CrossAxisAlignment.end, // Align carousel to the end (right)
                 children: [
                   SizedBox(
-                    height: 400, // Increased fixed height for the image carousel
+                    height: 900, // Increased fixed height for the image carousel
                     width: screenWidth * 0.4, // Adjust width to be a portion of screenWidth
                     child: PageView.builder( // Changed to PageView.builder for better control of current page
                       controller: _pageController,
