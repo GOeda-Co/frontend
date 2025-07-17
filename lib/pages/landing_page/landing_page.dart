@@ -143,7 +143,7 @@ class _MyLandingPageState extends State<MyLandingPage> {
                     Text(
                       'Remembering is \neasier with',
                       style: TextStyle(
-                        fontSize: 80,
+                        fontSize: 60,
                         color: Theme.of(context).colorScheme.onSurfaceVariant, // Use theme color
                         height: 1.0, // Ensure line height is consistent
                       ),
@@ -152,7 +152,7 @@ class _MyLandingPageState extends State<MyLandingPage> {
                     Text(
                       'Repeatro',
                       style: TextStyle(
-                        fontSize: 80,
+                        fontSize: 60,
                         color: Theme.of(context).colorScheme.onSurface, // Use theme color
                         height: 1.0, // Ensure line height is consistent
                       ),
@@ -183,7 +183,7 @@ class _MyLandingPageState extends State<MyLandingPage> {
                 crossAxisAlignment: CrossAxisAlignment.end, // Align carousel to the end (right)
                 children: [
                   SizedBox(
-                    height: 900, // Increased fixed height for the image carousel
+                    height: 400, // Increased fixed height for the image carousel
                     width: screenWidth * 0.4, // Adjust width to be a portion of screenWidth
                     child: PageView.builder( // Changed to PageView.builder for better control of current page
                       controller: _pageController,
